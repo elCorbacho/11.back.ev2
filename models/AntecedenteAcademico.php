@@ -1,4 +1,5 @@
 <?php
+//branc_ac
 class AntecedenteAcademico {
     private $conn;
     private $table = 'antecedenteacademico';
@@ -44,26 +45,21 @@ class AntecedenteAcademico {
 
     // Actualizar un antecedente académico
     public function actualizar($id, $data) {
-        if (!isset($data['candidato_id'], $data['institucion'], $data['titulo_obtenido'], $data['anio_ingreso'], $data['anio_egreso'])) {
-            return false;
+        // Build the SQL query dynamically based on the provided fields
+        $fields = [];
+        $params = [];
+        foreach ($data as $key => $value) {
+            if ($key !== 'id') { // Exclude the ID from the fields to update
+                $fields[] = "$key = :$key";
+                $params[":$key"] = $value;
+            }
         }
 
-        $query = "UPDATE $this->table SET
-                    candidato_id = :candidato_id,
-                    institucion = :institucion,
-                    titulo_obtenido = :titulo_obtenido,
-                    anio_ingreso = :anio_ingreso,
-                    anio_egreso = :anio_egreso
-                  WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':candidato_id', $data['candidato_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':institucion', $data['institucion'], PDO::PARAM_STR);
-        $stmt->bindValue(':titulo_obtenido', $data['titulo_obtenido'], PDO::PARAM_STR);
-        $stmt->bindValue(':anio_ingreso', $data['anio_ingreso'], PDO::PARAM_INT);
-        $stmt->bindValue(':anio_egreso', $data['anio_egreso'], PDO::PARAM_INT);
-        $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
+        $sql = "UPDATE $this->table SET " . implode(", ", $fields) . " WHERE id = :id";
+        $params[":id"] = $id;
 
-        return $stmt->execute();
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute($params); // Return true if successful, false otherwise
     }
 
     // Eliminar un antecedente académico

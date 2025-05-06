@@ -1,4 +1,5 @@
 <?php
+//branc_ac
 class AntecedenteLaboral {
     private $conn;
     private $table = 'antecedentelaboral';

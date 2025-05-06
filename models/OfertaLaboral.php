@@ -1,4 +1,5 @@
 <?php
+//branc_ac
 class OfertaLaboral {
     private $conn;
     private $table = 'ofertalaboral';

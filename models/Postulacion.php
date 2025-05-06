@@ -1,4 +1,5 @@
 <?php
+//branc_ac
 class Postulacion {
     private $db;
     private $table = 'postulaciones'; // Define the table name
