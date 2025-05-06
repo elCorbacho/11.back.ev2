@@ -30,15 +30,16 @@ $usuarioController = new Usuario($db);
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
-    // esto es para manejar las solicitudes según el método HTTP
     case 'GET':
         $type = $_GET['type'] ?? null;
-        
+
         if (!$type) {
-            // Si no se especifica el tipo, devolvemos un error 400
             http_response_code(400);
-            echo json_encode(array("message" => "Tipo de recurso no especificado."));
-            break; // Terminar la ejecución en este caso
+            echo json_encode(array(
+                "error" => true,
+                "message" => "El parámetro 'type' es obligatorio. Por favor, especifique un tipo de recurso como 'academico', 'laboral', 'usuario', etc."
+            ));
+            break;
         }
 
         // Procesar la solicitud según el tipo especificado
@@ -59,9 +60,8 @@ switch ($method) {
                 $usuarioController->obtenerTodos();
                 break;
             default:
-                // Si el tipo no es válido, devolvemos un error 400
                 http_response_code(400);
-                echo json_encode(array("message" => "Tipo de recurso no válido."));
+                echo json_encode(array("error" => true, "message" => "Tipo de recurso no válido."));
         }
         break;
 
@@ -70,13 +70,17 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!$type) {
-            // Si no se especifica el tipo, devolvemos un error 400
             http_response_code(400);
-            echo json_encode(array("message" => "Tipo de recurso no especificado."));
-            break; // Terminar la ejecución en este caso
+            echo json_encode(array("error" => true, "message" => "El parámetro 'type' es obligatorio."));
+            break;
         }
 
-        // Procesar la creación de datos según el tipo
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(array("error" => true, "message" => "El cuerpo de la solicitud no puede estar vacío."));
+            break;
+        }
+
         switch ($type) {
             case 'academico':
                 $antecedenteAcademicoController->crear($data);
@@ -94,9 +98,8 @@ switch ($method) {
                 $usuarioController->registrar($data);
                 break;
             default:
-                // Si el tipo no es válido, devolvemos un error 400
                 http_response_code(400);
-                echo json_encode(array("message" => "Tipo de recurso no válido."));
+                echo json_encode(array("error" => true, "message" => "Tipo de recurso no válido."));
         }
         break;
 
@@ -105,13 +108,17 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!$type) {
-            // Si no se especifica el tipo, devolvemos un error 400
             http_response_code(400);
-            echo json_encode(array("message" => "Tipo de recurso no especificado."));
-            break; // Terminar la ejecución en este caso
+            echo json_encode(array("error" => true, "message" => "El parámetro 'type' es obligatorio."));
+            break;
         }
 
-        // Procesar la actualización de datos según el tipo
+        if (!$data || !isset($data['id'])) {
+            http_response_code(400);
+            echo json_encode(array("error" => true, "message" => "El cuerpo de la solicitud debe incluir un 'id' válido."));
+            break;
+        }
+
         switch ($type) {
             case 'academico':
                 $antecedenteAcademicoController->actualizar($data['id'], $data);
@@ -129,9 +136,8 @@ switch ($method) {
                 $usuarioController->actualizar($data['id'], $data);
                 break;
             default:
-                // Si el tipo no es válido, devolvemos un error 400
                 http_response_code(400);
-                echo json_encode(array("message" => "Tipo de recurso no válido."));
+                echo json_encode(array("error" => true, "message" => "Tipo de recurso no válido."));
         }
         break;
 
@@ -140,13 +146,17 @@ switch ($method) {
         $id = $_GET['id'] ?? null;
 
         if (!$type) {
-            // Si no se especifica el tipo, devolvemos un error 400
             http_response_code(400);
-            echo json_encode(array("message" => "Tipo de recurso no especificado."));
-            break; // Terminar la ejecución en este caso
+            echo json_encode(array("error" => true, "message" => "El parámetro 'type' es obligatorio."));
+            break;
         }
 
-        // Procesar la eliminación de datos según el tipo
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(array("error" => true, "message" => "El parámetro 'id' es obligatorio para eliminar un recurso."));
+            break;
+        }
+
         switch ($type) {
             case 'academico':
                 $antecedenteAcademicoController->eliminar($id);
@@ -164,15 +174,13 @@ switch ($method) {
                 $usuarioController->eliminar($id);
                 break;
             default:
-                // Si el tipo no es válido, devolvemos un error 400
                 http_response_code(400);
-                echo json_encode(array("message" => "Tipo de recurso no válido."));
+                echo json_encode(array("error" => true, "message" => "Tipo de recurso no válido."));
         }
         break;
 
     default:
-        // Si el método no es permitido, devolvemos un error 405
         http_response_code(405);
-        echo json_encode(array("message" => "Método no permitido."));
+        echo json_encode(array("error" => true, "message" => "Método no permitido."));
         break;
 }
