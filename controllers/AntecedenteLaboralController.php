@@ -1,19 +1,33 @@
 <?php
+require_once './models/AntecedenteLaboral.php';
+require_once './database/db_connection.php';
 
-class AntecedenteLaboralController {
-    public function create($data) {
-        // Logic for creating a new resource
-    }
+$db = (new Database())->connect();
+$antecedenteLaboral = new AntecedenteLaboral($db);
 
-    public function read($id) {
-        // Logic for reading a resource by ID
-    }
+switch ($_SERVER['REQUEST_METHOD']) {
+    case 'GET':
+        if (isset($_GET['id'])) {
+            echo json_encode($antecedenteLaboral->obtenerPorId($_GET['id']));
+        } else {
+            echo json_encode($antecedenteLaboral->listar());
+        }
+        break;
 
-    public function update($id, $data) {
-        // Logic for updating a resource by ID
-    }
+    case 'POST':
+        $data = json_decode(file_get_contents("php://input"), true);
+        echo json_encode(['success' => $antecedenteLaboral->crear($data)]);
+        break;
 
-    public function delete($id) {
-        // Logic for deleting a resource by ID
-    }
+    case 'PUT':
+        parse_str(file_get_contents("php://input"), $putData);
+        echo json_encode(['success' => $antecedenteLaboral->actualizar($putData['id'], $putData)]);
+        break;
+
+    case 'DELETE':
+        parse_str(file_get_contents("php://input"), $delData);
+        echo json_encode(['success' => $antecedenteLaboral->eliminar($delData['id'])]);
+        break;
 }
+?>
+

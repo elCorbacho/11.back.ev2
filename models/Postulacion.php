@@ -16,12 +16,32 @@ class Postulacion {
         return $stmt->execute();
     }
 
+    public function listar() {
+        $query = "SELECT * FROM $this->table";
+        return $this->conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function listarPorCandidato($id) {
         $query = "SELECT * FROM $this->table WHERE candidato_id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function actualizar($id, $data) {
+        $query = "UPDATE $this->table SET comentario = :comentario WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':comentario', $data['comentario']);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
+
+    public function eliminar($id) {
+        $query = "DELETE FROM $this->table WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
     }
 }
 ?>

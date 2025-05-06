@@ -1,23 +1,25 @@
 <?php
-require_once __DIR__ . '/../models/Postulacion.php';
-class PostulacionController {
-    private $postulacion;
-    public function __construct($db) {
-        $this->postulacion = new Postulacion($db);
-    }
+require_once './models/Postulacion.php';
+require_once './database/db_connection.php';
 
-    public function postular($data) {
-        if ($data['rol'] !== 'Candidato') {
-            http_response_code(403);
-            echo json_encode(['error' => 'Solo candidatos pueden postular']);
-            return;
-        }
-        if ($this->postulacion->postular($data)) {
-            echo json_encode(['mensaje' => 'Postulación registrada']);
-        } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'Error al postular']);
-        }
-    }
+$db = (new Database())->connect();
+$postulacion = new Postulacion($db);
+
+switch ($_SERVER['REQUEST_METHOD']) {
+    case 'GET':
+        echo json_encode($postulacion->listar());
+        break;
+    case 'POST':
+        $data = json_decode(file_get_contents("php://input"), true);
+        echo json_encode(['success' => $postulacion->postular($data)]);
+        break;
+    case 'PUT':
+        parse_str(file_get_contents("php://input"), $putData);
+        echo json_encode(['success' => $postulacion->actualizar($putData['id'], $putData)]);
+        break;
+    case 'DELETE':
+        parse_str(file_get_contents("php://input"), $delData);
+        echo json_encode(['success' => $postulacion->eliminar($delData['id'])]);
+        break;
 }
 ?>

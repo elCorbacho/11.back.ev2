@@ -1,19 +1,32 @@
 <?php
+require_once './models/AntecedenteAcademico.php';
+require_once './database/db_connection.php';
 
-class AntecedenteAcademicoController {
-    public function create($data) {
-        // Logic for creating a new resource
-    }
+$db = (new Database())->connect();
+$antecedenteAcademico = new AntecedenteAcademico($db);
 
-    public function read($id) {
-        // Logic for reading a resource by ID
-    }
+switch ($_SERVER['REQUEST_METHOD']) {
+    case 'GET':
+        if (isset($_GET['id'])) {
+            echo json_encode($antecedenteAcademico->obtenerPorId($_GET['id']));
+        } else {
+            echo json_encode($antecedenteAcademico->listar());
+        }
+        break;
 
-    public function update($id, $data) {
-        // Logic for updating a resource by ID
-    }
+    case 'POST':
+        $data = json_decode(file_get_contents("php://input"), true);
+        echo json_encode(['success' => $antecedenteAcademico->crear($data)]);
+        break;
 
-    public function delete($id) {
-        // Logic for deleting a resource by ID
-    }
+    case 'PUT':
+        parse_str(file_get_contents("php://input"), $putData);
+        echo json_encode(['success' => $antecedenteAcademico->actualizar($putData['id'], $putData)]);
+        break;
+
+    case 'DELETE':
+        parse_str(file_get_contents("php://input"), $delData);
+        echo json_encode(['success' => $antecedenteAcademico->eliminar($delData['id'])]);
+        break;
 }
+?>

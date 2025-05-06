@@ -1,27 +1,49 @@
 <?php
-class Model2 {
-    private $db;
+class OfertaLaboral {
+    private $conn;
+    private $table = 'OfertaLaboral';
 
-    public function __construct($dbConnection) {
-        $this->db = $dbConnection;
+    public function __construct($db) {
+        $this->conn = $db;
     }
 
-    public function create($data) {
-        // Code to insert data into the database
+    public function crear($data) {
+        $query = "INSERT INTO $this->table (titulo, descripcion, ubicacion, salario, tipo_contrato, fecha_cierre, reclutador_id) VALUES (:titulo, :descripcion, :ubicacion, :salario, :tipo_contrato, :fecha_cierre, :reclutador_id)";
+        $stmt = $this->conn->prepare($query);
+        foreach ($data as $key => $value) {
+            $stmt->bindParam(":" . $key, $data[$key]);
+        }
+        return $stmt->execute();
     }
 
-    public function read($id) {
-        // Code to retrieve data from the database by ID
+    public function listar() {
+        $query = "SELECT * FROM $this->table WHERE estado = 'Vigente'";
+        return $this->conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function update($id, $data) {
-        // Code to update data in the database by ID
+    public function obtenerPorId($id) {
+        $query = "SELECT * FROM $this->table WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function delete($id) {
-        // Code to delete data from the database by ID
+    public function actualizar($id, $data) {
+        $query = "UPDATE $this->table SET titulo = :titulo, descripcion = :descripcion, ubicacion = :ubicacion, salario = :salario, tipo_contrato = :tipo_contrato, fecha_cierre = :fecha_cierre WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        foreach ($data as $key => $value) {
+            $stmt->bindParam(":" . $key, $data[$key]);
+        }
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
     }
 
-    // Additional methods specific to Model2 can be added here
+    public function eliminar($id) {
+        $query = "DELETE FROM $this->table WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }
 ?>

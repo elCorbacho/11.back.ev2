@@ -6,39 +6,31 @@ header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
 // esto es para incluir la conexión a la base de datos
-require_once 'database/db_connection.php';
+require_once './database/db_connection.php';
 
 // esto es para incluir los controladores
-require_once 'controllers/AntecedenteAcademicoController.php';
-require_once 'controllers/AntecedenteLaboralController.php';
-require_once 'controllers/OfertaLaboralController.php';
-require_once 'controllers/PostulacionController.php';
-require_once 'controllers/UsuarioController.php';
-
-// esto es para incluir los modelos
-require_once 'models/AntecedenteAcademico.php';
-require_once 'models/AntecedenteLaboral.php';
-require_once 'models/OfertaLaboral.php';
-require_once 'models/Postulacion.php';
-require_once 'models/Usuario.php';
-
+require_once './controllers/AntecedenteAcademicoController.php';
+require_once './controllers/AntecedenteLaboralController.php';
+require_once './controllers/OfertaLaboralController.php';
+require_once './controllers/PostulacionController.php';
+require_once './controllers/UsuarioController.php';
 
 // esto es para crear una instancia de la conexión a la base de datos
 $database = new Database();
-$dbConnection = $database->getConnection();
+$dbConnection = $database->connect();
 
 
 
 // Instancia el controlador de antecedentes académicos
-$AntecedenteAcademicoController = new AntecedenteAcademicoController($dbConnection);
+$AntecedenteAcademicoController = new AntecedenteAcademico($dbConnection);
 // Instancia el controlador de antecedentes laborales
-$AntecedenteLaboralController = new AntecedenteLaboralController($dbConnection);
+$AntecedenteLaboralController = new AntecedenteLaboral($dbConnection);
 // Instancia el controlador de ofertas laborales
-$OfertaLaboralController = new OfertaLaboralController($dbConnection);
+$OfertaLaboralController = new OfertaLaboral($dbConnection);
 // Instancia el controlador de postulaciones
-$PostulacionController = new PostulacionController($dbConnection);
+$PostulacionController = new Postulacion($dbConnection);
 // Instancia el controlador de usuarios
-$UsuarioController = new UsuarioController($dbConnection);
+$UsuarioController = new Usuario($dbConnection);
 // esto es para obtener el método HTTP que se está utilizando
 
 
@@ -57,19 +49,19 @@ switch ($method) {
         if ($type) {
             switch ($type) {
                 case 'academico':
-                    $AntecedenteAcademicoController->obtenerAntecedentesAcademicos();
+                    $AntecedenteAcademicoController->listar();
                     break;
                 case 'laboral':
-                    $AntecedenteLaboralController->obtenerAntecedentesLaborales();
+                    $AntecedenteLaboralController->listar();
                     break;
                 case 'oferta':
-                    $OfertaLaboralController->obtenerOfertasLaborales();
+                    $OfertaLaboralController->listar();
                     break;
                 case 'postulacion':
-                    $PostulacionController->obtenerPostulaciones();
+                    $PostulacionController->listar();
                     break;
                 case 'usuario':
-                    $UsuarioController->obtenerUsuarios();
+                    $UsuarioController->obtenerTodos();
                     break;
                 default:
                     http_response_code(400);
@@ -88,19 +80,19 @@ switch ($method) {
         if ($type) {
             switch ($type) {
                 case 'academico':
-                    $AntecedenteAcademicoController->insertarAntecedenteAcademico($data);
+                    $AntecedenteAcademicoController->crear($data);
                     break;
                 case 'laboral':
-                    $AntecedenteLaboralController->insertarAntecedenteLaboral($data);
+                    $AntecedenteLaboralController->crear($data);
                     break;
                 case 'oferta':
-                    $OfertaLaboralController->insertarOfertaLaboral($data);
+                    $OfertaLaboralController->crear($data);
                     break;
                 case 'postulacion':
-                    $PostulacionController->insertarPostulacion($data);
+                    $PostulacionController->postular($data);
                     break;
                 case 'usuario':
-                    $UsuarioController->insertarUsuario($data);
+                    $UsuarioController->registrar($data);
                     break;
                 default:
                     http_response_code(400);
@@ -120,19 +112,19 @@ switch ($method) {
         if ($type) {
             switch ($type) {
                 case 'academico':
-                    $AntecedenteAcademicoController->actualizarAntecedenteAcademico($data);
+                    $AntecedenteAcademicoController->actualizar($data['id'], $data);
                     break;
                 case 'laboral':
-                    $AntecedenteLaboralController->actualizarAntecedenteLaboral($data);
+                    $AntecedenteLaboralController->actualizar($data['id'], $data);
                     break;
                 case 'oferta':
-                    $OfertaLaboralController->actualizarOfertaLaboral($data);
+                    $OfertaLaboralController->actualizar($data['id'], $data);
                     break;
                 case 'postulacion':
-                    $PostulacionController->actualizarPostulacion($data);
+                    $PostulacionController->actualizar($data['id'], $data);
                     break;
                 case 'usuario':
-                    $UsuarioController->actualizarUsuario($data);
+                    $UsuarioController->actualizar($data['id'], $data);
                     break;
                 default:
                     http_response_code(400);
@@ -151,23 +143,23 @@ switch ($method) {
         if ($type) {
             switch ($type) {
                 case 'academico':
-                    $AntecedenteAcademicoController->eliminarAntecedenteAcademico($id);
+                    $AntecedenteAcademicoController->eliminar($id);
                     break;
                 case 'laboral':
-                    $AntecedenteLaboralController->eliminarAntecedenteLaboral($id);
+                    $AntecedenteLaboralController->eliminar($id);
                     break;
                 case 'oferta':
-                    $OfertaLaboralController->eliminarOfertaLaboral($id);
+                    $OfertaLaboralController->eliminar($id);
                     break;
                 case 'postulacion':
-                    $PostulacionController->eliminarPostulacion($id);
+                    $PostulacionController->eliminar($id);
                     break;
                 case 'usuario':
-                    $UsuarioController->eliminarUsuario($id);
+                    $UsuarioController->eliminar($id);
                     break;
                 default:
                     http_response_code(400);
-                    echo json_encode(array("message" => "Tipo de recurso no válido."));
+                    echo json_encode(array("message" => "Tipo de recurso no valido."));
             }
         } else {
             http_response_code(400);
@@ -177,6 +169,6 @@ switch ($method) {
 
     default:
         http_response_code(405);
-        echo json_encode(array("message" => "Método no permitido."));
+        echo json_encode(array("message" => "Metodo no permitido."));
         break;
 }
