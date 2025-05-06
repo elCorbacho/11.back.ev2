@@ -27,5 +27,13 @@ class UsuarioController {
         $success = $this->usuarioModel->eliminar($id);
         echo json_encode(['success' => $success]);
     }
+
+    public function obtenerUno($id) {
+        // Implementación para obtener un usuario por ID
+        http_response_code(200);
+        echo json_encode(array(
+            "message" => "Método obtenerUno ejecutado en UsuarioController con ID: $id"
+        ));
+    }
 }
 

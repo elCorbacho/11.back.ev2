@@ -32,5 +32,13 @@ class PostulacionController {
         $success = $this->postulacionModel->eliminar($id);
         echo json_encode(['success' => $success]);
     }
+
+    public function obtenerUno($id) {
+        // Implementación para obtener una postulación por ID
+        http_response_code(200);
+        echo json_encode(array(
+            "message" => "Método obtenerUno ejecutado en PostulacionController con ID: $id"
+        ));
+    }
 }
 

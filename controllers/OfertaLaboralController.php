@@ -1,45 +1,112 @@
 <?php
 require_once './models/OfertaLaboral.php';
-require_once './config/database.php';
 
-$db = (new Database())->getConnection();
-$ofertaModel = new OfertaLaboral($db);
+class OfertaLaboralController {
+    private $ofertaModel;
 
-// Controlador de nivel superior
-switch ($_SERVER['REQUEST_METHOD']) {
-    case 'GET':
-        // Si viene ?id=123, obtén una sola oferta
+    public function __construct($db) {
+        $this->ofertaModel = new OfertaLaboral($db);
+    }
+
+    public function manejarSolicitud() {
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $this->manejarGet();
+                break;
+            case 'POST':
+                $this->manejarPost();
+                break;
+            case 'PUT':
+                $this->manejarPut();
+                break;
+            case 'DELETE':
+                $this->manejarDelete();
+                break;
+            default:
+                http_response_code(405);
+                echo json_encode(['error' => 'Método no permitido']);
+                break;
+        }
+    }
+
+    private function manejarGet() {
         if (isset($_GET['id'])) {
-            echo json_encode($ofertaModel->obtenerPorId($_GET['id']));
+            $resultado = $this->ofertaModel->obtenerPorId($_GET['id']);
+            if ($resultado) {
+                echo json_encode($resultado);
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'Oferta no encontrada']);
+            }
         } else {
-            echo json_encode($ofertaModel->listar());
+            echo json_encode($this->ofertaModel->listar());
         }
-        break;
+    }
 
-    case 'POST':
+    private function manejarPost() {
         $data = json_decode(file_get_contents("php://input"), true);
-        $success = $ofertaModel->crear($data);
-        echo json_encode(['success' => $success]);
-        break;
-
-    case 'PUT':
-        parse_str(file_get_contents("php://input"), $putData);
-        if (isset($putData['id'])) {
-            $success = $ofertaModel->actualizar($putData['id'], $putData);
-            echo json_encode(['success' => $success]);
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Falta el ID']);
+        if (!$data || empty($data)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos inválidos o vacíos']);
+            return;
         }
-        break;
 
-    case 'DELETE':
-        parse_str(file_get_contents("php://input"), $delData);
-        if (isset($delData['id'])) {
-            $success = $ofertaModel->eliminar($delData['id']);
-            echo json_encode(['success' => $success]);
+        $success = $this->ofertaModel->crear($data);
+        if ($success) {
+            http_response_code(201);
+            echo json_encode(['success' => true]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'Falta el ID']);
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al crear la oferta']);
         }
-        break;
+    }
+
+    private function manejarPut() {
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data || !isset($data['id'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Falta el ID o los datos son inválidos']);
+            return;
+        }
+
+        $success = $this->ofertaModel->actualizar($data['id'], $data);
+        if ($success) {
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Oferta no encontrada o no se pudo actualizar']);
+        }
+    }
+
+    private function manejarDelete() {
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data || !isset($data['id'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Falta el ID']);
+            return;
+        }
+
+        $success = $this->ofertaModel->eliminar($data['id']);
+        if ($success) {
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Oferta no encontrada o no se pudo eliminar']);
+        }
+    }
+
+    public function obtenerUno($id) {
+        // Implementación para obtener una oferta laboral por ID
+        http_response_code(200);
+        echo json_encode(array(
+            "message" => "Método obtenerUno ejecutado en OfertaLaboralController con ID: $id"
+        ));
+    }
 }
+
+// Crear instancia del controlador y manejar la solicitud
+require_once './config/database.php';
+$db = (new Database())->getConnection();
+$controller = new OfertaLaboralController($db);
+$controller->manejarSolicitud();
 
