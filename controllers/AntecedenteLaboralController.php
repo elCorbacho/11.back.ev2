@@ -1,6 +1,6 @@
 <?php
 
-class Controller4 {
+class AntecedenteLaboralController {
     public function create($data) {
         // Logic for creating a new resource
     }

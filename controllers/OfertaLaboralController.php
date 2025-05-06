@@ -1,6 +1,6 @@
 <?php
 
-class Controller2 {
+class OfertaLaboralController {
     public function create($data) {
         // Code to create a new resource
     }

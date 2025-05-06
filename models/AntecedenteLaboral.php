@@ -1,6 +1,5 @@
 <?php
-
-class Model1 {
+class Model3 {
     private $db;
 
     public function __construct($dbConnection) {
@@ -12,18 +11,15 @@ class Model1 {
     }
 
     public function read($id) {
-        // Code to retrieve data from the database by ID
+        // Code to retrieve data from the database
     }
 
     public function update($id, $data) {
-        // Code to update data in the database by ID
+        // Code to update data in the database
     }
 
     public function delete($id) {
-        // Code to delete data from the database by ID
-    }
-
-    public function getAll() {
-        // Code to retrieve all records from the database
+        // Code to delete data from the database
     }
 }
+?>

@@ -1,6 +1,6 @@
 <?php
 
-class Controller1 {
+class UsuarioController {
     public function create($data) {
         // Logic to create a resource
     }
