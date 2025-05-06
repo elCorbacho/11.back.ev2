@@ -1,8 +1,8 @@
 <?php
 require_once './models/OfertaLaboral.php';
-require_once './database/db_connection.php';
+require_once './config/database.php';
 
-$db = (new Database())->connect();
+$db = (new Database())->getConnection();
 $ofertaModel = new OfertaLaboral($db);
 
 // Controlador de nivel superior

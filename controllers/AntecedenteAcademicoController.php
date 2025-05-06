@@ -1,10 +1,10 @@
 <?php
 require_once './models/AntecedenteAcademico.php';
-require_once './database/db_connection.php';
+require_once './config/database.php';
 
 header('Content-Type: application/json');
 
-$db = (new Database())->connect();
+$db = (new Database())->getConnection();
 $antecedenteAcademico = new AntecedenteAcademico($db);
 
 $method = $_SERVER['REQUEST_METHOD'];

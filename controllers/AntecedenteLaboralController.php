@@ -1,12 +1,12 @@
 <?php
 require_once './models/AntecedenteLaboral.php';
-require_once './database/db_connection.php';
+require_once './config/database.php';
 
 // Configurar cabecera para JSON
 header('Content-Type: application/json; charset=utf-8');
 
 // Crear conexión
-$db = (new Database())->connect();
+$db = (new Database())->getConnection();
 $antecedenteLaboral = new AntecedenteLaboral($db);
 
 // Manejo de errores generales

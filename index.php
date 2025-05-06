@@ -13,22 +13,18 @@ require_once './controllers/PostulacionController.php';
 require_once './controllers/UsuarioController.php';
 
 // esto es para incluir la conexión a la base de datos
-require_once './database/db_connection.php';
+require_once './config/database.php';
 
 // esto es para crear una instancia de la conexión a la base de datos
 $database = new Database();
-$dbConnection = $database->connect();
+$db = $database->getConnection();
 
-// Instancia el controlador de antecedentes académicos
-$AntecedenteAcademicoController = new AntecedenteAcademico($dbConnection);
-// Instancia el controlador de antecedentes laborales
-$AntecedenteLaboralController = new AntecedenteLaboral($dbConnection);
-// Instancia el controlador de ofertas laborales
-$OfertaLaboralController = new OfertaLaboral($dbConnection);
-// Instancia el controlador de postulaciones
-$PostulacionController = new PostulacionController($dbConnection);
-// Instancia el controlador de usuarios
-$UsuarioController = new Usuario($dbConnection);
+// esto es para crear una instancia de los controladores
+$antecedenteAcademicoController = new AntecedenteAcademico($db);
+$antecedenteLaboralController = new AntecedenteLaboral($db);
+$ofertaLaboralController = new OfertaLaboral($db);
+$postulacionController = new PostulacionController($db);
+$usuarioController = new Usuario($db);
 
 // esto es para obtener el método HTTP que se está utilizando
 $method = $_SERVER['REQUEST_METHOD'];
@@ -48,19 +44,19 @@ switch ($method) {
         // Procesar la solicitud según el tipo especificado
         switch ($type) {
             case 'academico':
-                $AntecedenteAcademicoController->listar();
+                $antecedenteAcademicoController->listar();
                 break;
             case 'laboral':
-                $AntecedenteLaboralController->listar();
+                $antecedenteLaboralController->listar();
                 break;
             case 'oferta':
-                $OfertaLaboralController->listar();
+                $ofertaLaboralController->listar();
                 break;
             case 'postulacion':
-                $PostulacionController->listar();
+                $postulacionController->listar();
                 break;
             case 'usuario':
-                $UsuarioController->obtenerTodos();
+                $usuarioController->obtenerTodos();
                 break;
             default:
                 // Si el tipo no es válido, devolvemos un error 400
@@ -83,19 +79,19 @@ switch ($method) {
         // Procesar la creación de datos según el tipo
         switch ($type) {
             case 'academico':
-                $AntecedenteAcademicoController->crear($data);
+                $antecedenteAcademicoController->crear($data);
                 break;
             case 'laboral':
-                $AntecedenteLaboralController->crear($data);
+                $antecedenteLaboralController->crear($data);
                 break;
             case 'oferta':
-                $OfertaLaboralController->crear($data);
+                $ofertaLaboralController->crear($data);
                 break;
             case 'postulacion':
-                $PostulacionController->postular($data);
+                $postulacionController->postular($data);
                 break;
             case 'usuario':
-                $UsuarioController->registrar($data);
+                $usuarioController->registrar($data);
                 break;
             default:
                 // Si el tipo no es válido, devolvemos un error 400
@@ -118,19 +114,19 @@ switch ($method) {
         // Procesar la actualización de datos según el tipo
         switch ($type) {
             case 'academico':
-                $AntecedenteAcademicoController->actualizar($data['id'], $data);
+                $antecedenteAcademicoController->actualizar($data['id'], $data);
                 break;
             case 'laboral':
-                $AntecedenteLaboralController->actualizar($data['id'], $data);
+                $antecedenteLaboralController->actualizar($data['id'], $data);
                 break;
             case 'oferta':
-                $OfertaLaboralController->actualizar($data['id'], $data);
+                $ofertaLaboralController->actualizar($data['id'], $data);
                 break;
             case 'postulacion':
-                $PostulacionController->actualizar($data['id'], $data);
+                $postulacionController->actualizar($data['id'], $data);
                 break;
             case 'usuario':
-                $UsuarioController->actualizar($data['id'], $data);
+                $usuarioController->actualizar($data['id'], $data);
                 break;
             default:
                 // Si el tipo no es válido, devolvemos un error 400
@@ -153,19 +149,19 @@ switch ($method) {
         // Procesar la eliminación de datos según el tipo
         switch ($type) {
             case 'academico':
-                $AntecedenteAcademicoController->eliminar($id);
+                $antecedenteAcademicoController->eliminar($id);
                 break;
             case 'laboral':
-                $AntecedenteLaboralController->eliminar($id);
+                $antecedenteLaboralController->eliminar($id);
                 break;
             case 'oferta':
-                $OfertaLaboralController->eliminar($id);
+                $ofertaLaboralController->eliminar($id);
                 break;
             case 'postulacion':
-                $PostulacionController->eliminar($id);
+                $postulacionController->eliminar($id);
                 break;
             case 'usuario':
-                $UsuarioController->eliminar($id);
+                $usuarioController->eliminar($id);
                 break;
             default:
                 // Si el tipo no es válido, devolvemos un error 400
