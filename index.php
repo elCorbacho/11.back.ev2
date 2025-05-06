@@ -1,15 +1,15 @@
 <?php
 //BRANCH_AC
-// esto sirve para que el servidor web reconozca el archivo como un script PHP
+// permite el acceso a la API desde cualquier origen
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
-// esto es para incluir los controladores
+// 
 require_once './controllers/AntecedenteAcademicoController.php';
 require_once './controllers/AntecedenteLaboralController.php';
-require_once './controllers/OfertaLaboralController.php'; // Ensure this file exists and contains the class definition
+require_once './controllers/OfertaLaboralController.php';
 require_once './controllers/PostulacionController.php';
 require_once './controllers/UsuarioController.php';
 

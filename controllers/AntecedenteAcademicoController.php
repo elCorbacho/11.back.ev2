@@ -1,7 +1,9 @@
 <?php
+// permite el acceso a la API desde cualquier origen
 require_once './models/AntecedenteAcademico.php';
 
-class AntecedenteAcademicoController {
+// controller para manejar las solicitudes relacionadas con antecedentes académicos
+class AntecedenteAcademicoController { 
     private $antecedenteAcademico;
 
     public function __construct($db) {
@@ -58,14 +60,7 @@ class AntecedenteAcademicoController {
             return;
         }
 
-        $success = $this->antecedenteAcademico->crear($data);
-        if ($success) {
-            http_response_code(201);
-            echo json_encode(['success' => true]);
-        } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'No se pudo crear el antecedente académico']);
-        }
+        $this->crear($data);
     }
 
     private function manejarPut() {
@@ -101,6 +96,25 @@ class AntecedenteAcademicoController {
         } else {
             http_response_code(404);
             echo json_encode(['error' => 'No se pudo eliminar o no existe']);
+        }
+    }
+
+    public function crear($data) {
+        // Validar los datos antes de pasarlos al modelo
+        if (empty($data['titulo']) || empty($data['institucion']) || empty($data['fecha_inicio']) || empty($data['fecha_fin'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos incompletos']);
+            return;
+        }
+
+        // Llamar al modelo para crear el registro
+        $success = $this->antecedenteAcademico->crear($data);
+        if ($success) {
+            http_response_code(201);
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'No se pudo crear el antecedente académico']);
         }
     }
 
