@@ -111,7 +111,7 @@ if (!isset($controller)) {
     exit;
 }
 
-// Mapeo según el método HTTP
+// Mapeo según el método HTTP con GET, POST, PUT, PATCH, DELETE
 switch ($method) {
     case 'GET':
         if ($id) {
@@ -120,6 +120,7 @@ switch ($method) {
             $controller->obtenerTodos();
         }
         break;
+
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data) {
@@ -132,19 +133,52 @@ switch ($method) {
         }
         $controller->crear($data);
         break;
+
     case 'PUT':
-    case 'PATCH':
-        $data = json_decode(file_get_contents("php://input"), true);
-        if (!$data) {
+        if (!$id) {
             http_response_code(400);
-            echo json_encode(array(
-                "error" => true,
-                "message" => "El cuerpo de la solicitud no es válido o está vacío."
-            ));
+            echo json_encode(["error" => true, "message" => "ID requerido."]);
             exit;
         }
-        $controller->actualizar($id, $data);
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data || !is_array($data)) {
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "El cuerpo de la solicitud debe ser un JSON válido."]);
+            exit;
+        }
+        // Validar campos obligatorios
+        $requiredFields = ['campo1', 'campo2']; // Cambiar según los campos necesarios
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field])) {
+                http_response_code(400);
+                echo json_encode(["error" => true, "message" => "El campo '$field' es obligatorio."]);
+                exit;
+            }
+        }
+        $controller->actualizarCompleto($id, $data);
         break;
+
+    case 'PATCH':
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "ID requerido."]);
+            exit;
+        }
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data || !is_array($data)) {
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "El cuerpo de la solicitud debe ser un JSON válido."]);
+            exit;
+        }
+        // Validar que al menos un campo esté presente
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "Debe proporcionar al menos un campo para actualizar."]);
+            exit;
+        }
+        $controller->actualizarParcial($id, $data);
+        break;
+
     case 'DELETE':
         if (!$id) {
             http_response_code(400);
@@ -156,6 +190,7 @@ switch ($method) {
         }
         $controller->eliminar($id);
         break;
+
     case 'OPTIONS':
         // Preflight request para CORS
         http_response_code(200);

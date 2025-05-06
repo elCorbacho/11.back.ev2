@@ -6,7 +6,7 @@ class Usuario {
         $this->conn = $db;
     }
 
-    //esto es para registrar un nuevo usuario
+    //esto es para registrar un nuevo usuario con el metodo POST
     public function registrar($data) {
         $query = "INSERT INTO usuario (nombre, apellido, email, contrasena, fecha_nacimiento, telefono, direccion, rol) VALUES (:nombre, :apellido, :email, :contrasena, :fecha_nacimiento, :telefono, :direccion, :rol)";
         $stmt = $this->conn->prepare($query);
@@ -24,7 +24,7 @@ class Usuario {
         return $stmt->execute();
     }
 
-    //esto es para iniciar sesión
+    //esto es para iniciar sesión 
     public function iniciarSesion($email, $contrasena) {
         $query = "SELECT * FROM usuario WHERE email = :email AND estado = 'Activo'";
         $stmt = $this->conn->prepare($query);
@@ -41,12 +41,14 @@ class Usuario {
         return false;
     }
 
-    //esto es para obtener todos los usuarios
+    //esto es para obtener todos los usuarios del metodo GET
     public function obtenerTodos() {
         $query = "SELECT * FROM usuario WHERE estado = 'Activo'";
         return $this->conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    // esto es para obtener un usuario por id del metodo GET
     public function actualizar($id, $data) {
         $queryCheck = "SELECT id FROM usuario WHERE id = :id AND estado = 'Activo'";
         $stmtCheck = $this->conn->prepare($queryCheck);
@@ -80,8 +82,9 @@ class Usuario {
         return $stmt->execute();
     }
 
-    //esto es para eliminar un usuario
-    public function eliminar($id) {
+    //esto es para eliminar un usuario con el metodo DELETE
+    //esto no elimina el usuario de la base de datos, solo cambia su estado a inactivo
+        public function eliminar($id) {
         $query = "UPDATE usuario SET estado = 'Inactivo' WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
