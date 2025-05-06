@@ -3,23 +3,43 @@ require_once './models/OfertaLaboral.php';
 require_once './database/db_connection.php';
 
 $db = (new Database())->connect();
-$oferta = new OfertaLaboral($db);
+$ofertaModel = new OfertaLaboral($db);
 
+// Controlador de nivel superior
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        echo json_encode($oferta->listar());
+        // Si viene ?id=123, obtén una sola oferta
+        if (isset($_GET['id'])) {
+            echo json_encode($ofertaModel->obtenerPorId($_GET['id']));
+        } else {
+            echo json_encode($ofertaModel->listar());
+        }
         break;
+
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
-        echo json_encode(['success' => $oferta->crear($data)]);
+        $success = $ofertaModel->crear($data);
+        echo json_encode(['success' => $success]);
         break;
+
     case 'PUT':
         parse_str(file_get_contents("php://input"), $putData);
-        echo json_encode(['success' => $oferta->actualizar($putData['id'], $putData)]);
+        if (isset($putData['id'])) {
+            $success = $ofertaModel->actualizar($putData['id'], $putData);
+            echo json_encode(['success' => $success]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Falta el ID']);
+        }
         break;
+
     case 'DELETE':
         parse_str(file_get_contents("php://input"), $delData);
-        echo json_encode(['success' => $oferta->eliminar($delData['id'])]);
+        if (isset($delData['id'])) {
+            $success = $ofertaModel->eliminar($delData['id']);
+            echo json_encode(['success' => $success]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Falta el ID']);
+        }
         break;
 }
-?>
+

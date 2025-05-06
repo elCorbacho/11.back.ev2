@@ -1,28 +1,31 @@
 <?php
 require_once './models/Usuario.php';
-require_once './database/db_connection.php';
 
+class UsuarioController {
+    private $usuarioModel;
 
+    public function __construct($db) {
+        $this->usuarioModel = new Usuario($db);
+    }
 
-$db = (new Database())->connect();
-$usuario = new Usuario($db);
+    public function obtenerTodos() {
+        $result = $this->usuarioModel->obtenerTodos();
+        echo json_encode($result);
+    }
 
-// Aquí puedes usar $_GET['action'] o $_POST['action'] para decidir la acción.
-switch ($_SERVER['REQUEST_METHOD']) {
-    case 'GET':
-        echo json_encode($usuario->obtenerTodos());
-        break;
-    case 'POST':
-        $data = json_decode(file_get_contents("php://input"), true);
-        echo json_encode(['success' => $usuario->registrar($data)]);
-        break;
-    case 'PUT':
-        parse_str(file_get_contents("php://input"), $putData);
-        echo json_encode(['success' => $usuario->actualizar($putData['id'], $putData)]);
-        break;
-    case 'DELETE':
-        parse_str(file_get_contents("php://input"), $delData);
-        echo json_encode(['success' => $usuario->eliminar($delData['id'])]);
-        break;
+    public function registrar($data) {
+        $success = $this->usuarioModel->registrar($data);
+        echo json_encode(['success' => $success]);
+    }
+
+    public function actualizar($id, $data) {
+        $success = $this->usuarioModel->actualizar($id, $data);
+        echo json_encode(['success' => $success]);
+    }
+
+    public function eliminar($id) {
+        $success = $this->usuarioModel->eliminar($id);
+        echo json_encode(['success' => $success]);
+    }
 }
-?>
+

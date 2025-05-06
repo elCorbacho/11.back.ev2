@@ -1,24 +1,34 @@
 <?php
 class OfertaLaboral {
     private $conn;
-    private $table = 'OfertaLaboral';
+    private $table = 'ofertalaboral';
 
     public function __construct($db) {
         $this->conn = $db;
     }
 
     public function crear($data) {
-        $query = "INSERT INTO $this->table (titulo, descripcion, ubicacion, salario, tipo_contrato, fecha_cierre, reclutador_id) VALUES (:titulo, :descripcion, :ubicacion, :salario, :tipo_contrato, :fecha_cierre, :reclutador_id)";
+        $query = "INSERT INTO $this->table 
+            (titulo, descripcion, ubicacion, salario, tipo_contrato, fecha_cierre, reclutador_id) 
+            VALUES (:titulo, :descripcion, :ubicacion, :salario, :tipo_contrato, :fecha_cierre, :reclutador_id)";
+
         $stmt = $this->conn->prepare($query);
-        foreach ($data as $key => $value) {
-            $stmt->bindParam(":" . $key, $data[$key]);
-        }
+
+        $stmt->bindParam(':titulo', $data['titulo']);
+        $stmt->bindParam(':descripcion', $data['descripcion']);
+        $stmt->bindParam(':ubicacion', $data['ubicacion']);
+        $stmt->bindParam(':salario', $data['salario']);
+        $stmt->bindParam(':tipo_contrato', $data['tipo_contrato']);
+        $stmt->bindParam(':fecha_cierre', $data['fecha_cierre']);
+        $stmt->bindParam(':reclutador_id', $data['reclutador_id']);
+
         return $stmt->execute();
     }
 
     public function listar() {
         $query = "SELECT * FROM $this->table WHERE estado = 'Vigente'";
-        return $this->conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function obtenerPorId($id) {
@@ -30,12 +40,25 @@ class OfertaLaboral {
     }
 
     public function actualizar($id, $data) {
-        $query = "UPDATE $this->table SET titulo = :titulo, descripcion = :descripcion, ubicacion = :ubicacion, salario = :salario, tipo_contrato = :tipo_contrato, fecha_cierre = :fecha_cierre WHERE id = :id";
+        $query = "UPDATE $this->table SET 
+            titulo = :titulo, 
+            descripcion = :descripcion, 
+            ubicacion = :ubicacion, 
+            salario = :salario, 
+            tipo_contrato = :tipo_contrato, 
+            fecha_cierre = :fecha_cierre 
+            WHERE id = :id";
+
         $stmt = $this->conn->prepare($query);
-        foreach ($data as $key => $value) {
-            $stmt->bindParam(":" . $key, $data[$key]);
-        }
+
+        $stmt->bindParam(':titulo', $data['titulo']);
+        $stmt->bindParam(':descripcion', $data['descripcion']);
+        $stmt->bindParam(':ubicacion', $data['ubicacion']);
+        $stmt->bindParam(':salario', $data['salario']);
+        $stmt->bindParam(':tipo_contrato', $data['tipo_contrato']);
+        $stmt->bindParam(':fecha_cierre', $data['fecha_cierre']);
         $stmt->bindParam(':id', $id);
+
         return $stmt->execute();
     }
 

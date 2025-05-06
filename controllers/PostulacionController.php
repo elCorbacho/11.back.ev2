@@ -1,25 +1,36 @@
 <?php
 require_once './models/Postulacion.php';
-require_once './database/db_connection.php';
 
-$db = (new Database())->connect();
-$postulacion = new Postulacion($db);
+class PostulacionController {
+    private $postulacionModel;
 
-switch ($_SERVER['REQUEST_METHOD']) {
-    case 'GET':
-        echo json_encode($postulacion->listar());
-        break;
-    case 'POST':
-        $data = json_decode(file_get_contents("php://input"), true);
-        echo json_encode(['success' => $postulacion->postular($data)]);
-        break;
-    case 'PUT':
-        parse_str(file_get_contents("php://input"), $putData);
-        echo json_encode(['success' => $postulacion->actualizar($putData['id'], $putData)]);
-        break;
-    case 'DELETE':
-        parse_str(file_get_contents("php://input"), $delData);
-        echo json_encode(['success' => $postulacion->eliminar($delData['id'])]);
-        break;
+    public function __construct($db) {
+        $this->postulacionModel = new Postulacion($db);
+    }
+
+    public function listar() {
+        $result = $this->postulacionModel->listar();
+        echo json_encode($result);
+    }
+
+    public function listarPorCandidato($id) {
+        $result = $this->postulacionModel->listarPorCandidato($id);
+        echo json_encode($result);
+    }
+
+    public function postular($data) {
+        $success = $this->postulacionModel->postular($data);
+        echo json_encode(['success' => $success]);
+    }
+
+    public function actualizar($id, $data) {
+        $success = $this->postulacionModel->actualizar($id, $data);
+        echo json_encode(['success' => $success]);
+    }
+
+    public function eliminar($id) {
+        $success = $this->postulacionModel->eliminar($id);
+        echo json_encode(['success' => $success]);
+    }
 }
-?>
+

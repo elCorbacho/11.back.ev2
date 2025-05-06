@@ -1,7 +1,7 @@
 <?php
 class Postulacion {
     private $conn;
-    private $table = 'Postulacion';
+    private $table = 'postulacion';
 
     public function __construct($db) {
         $this->conn = $db;
@@ -18,7 +18,9 @@ class Postulacion {
 
     public function listar() {
         $query = "SELECT * FROM $this->table";
-        return $this->conn->query($query)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function listarPorCandidato($id) {
@@ -44,4 +46,3 @@ class Postulacion {
         return $stmt->execute();
     }
 }
-?>

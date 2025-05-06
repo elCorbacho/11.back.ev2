@@ -1,7 +1,7 @@
 <?php
 class Usuario {
     private $conn;
-    private $table = 'Usuario';
+    private $table = 'usuario';
 
     public function __construct($db) {
         $this->conn = $db;
