@@ -1,59 +1,93 @@
 # PHP API Project
 
 ## Overview
-This project is a simple PHP API that demonstrates the use of controllers and models to handle CRUD operations for multiple resources. It is structured to provide a clear separation of concerns, making it easy to maintain and extend.
+Este proyecto es una API desarrollada en PHP que implementa controladores y modelos para manejar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) para múltiples recursos. Está estructurado para proporcionar una clara separación de responsabilidades, facilitando su mantenimiento y escalabilidad.
 
 ## Project Structure
 ```
-php-api-project
+11.back.ev2
 ├── controllers
-│   ├── Controller1.php
-│   ├── Controller2.php
-│   ├── Controller3.php
-│   └── Controller4.php
+│   ├── AntecedenteAcademicoController.php
+│   ├── AntecedenteLaboralController.php
+│   ├── OfertaLaboralController.php
+│   ├── PostulacionController.php
+│   └── UsuarioController.php
 ├── models
-│   ├── Model1.php
-│   ├── Model2.php
-│   ├── Model3.php
-│   └── Model4.php
-├── database
-│   └── db_connection.php
+│   ├── AntecedenteAcademico.php
+│   ├── AntecedenteLaboral.php
+│   ├── OfertaLaboral.php
+│   ├── Postulacion.php
+│   └── Usuario.php
+├── config
+│   └── database.php
 ├── index.php
 └── README.md
 ```
 
 ## Setup Instructions
-1. Clone the repository:
-   ```
+1. Clona el repositorio:
+   ```bash
    git clone <repository-url>
    ```
-2. Navigate to the project directory:
-   ```
-   cd php-api-project
-   ```
-3. Configure the database connection in `database/db_connection.php` with your database credentials.
 
-4. Start a local server (e.g., using PHP's built-in server):
+2. Navega al directorio del proyecto:
+   ```bash
+   cd 11.back.ev2
    ```
+
+3. Configura la conexión a la base de datos en `config/database.php` con tus credenciales de base de datos.
+
+4. Inicia el servidor local (por ejemplo, usando XAMPP o el servidor integrado de PHP):
+   ```bash
    php -S localhost:8000
    ```
 
-## Usage
-- Access the API endpoints through your browser or a tool like Postman.
-- The API supports the following operations for each resource:
-  - **Create**: POST request to `/resource`
-  - **Read**: GET request to `/resource` or `/resource/{id}`
-  - **Update**: PUT request to `/resource/{id}`
-  - **Delete**: DELETE request to `/resource/{id}`
+5. Accede a la API en tu navegador o herramienta como Postman:
+   ```
+   http://localhost:8000/index.php
+   ```
 
-## API Endpoints
-- `/resource1` - Handled by `Controller1`
-- `/resource2` - Handled by `Controller2`
-- `/resource3` - Handled by `Controller3`
-- `/resource4` - Handled by `Controller4`
+## API Usage
+La API soporta las siguientes operaciones para cada recurso:
+
+- **GET**: Obtener datos.
+- **POST**: Crear un nuevo registro.
+- **PUT**: Actualizar un registro existente.
+- **DELETE**: Eliminar un registro.
+
+### Endpoints Disponibles
+- **Antecedentes Académicos**:
+  - `GET /index.php?type=academico`
+  - `POST /index.php?type=academico`
+  - `PUT /index.php?type=academico`
+  - `DELETE /index.php?type=academico`
+
+- **Antecedentes Laborales**:
+  - `GET /index.php?type=laboral`
+  - `POST /index.php?type=laboral`
+  - `PUT /index.php?type=laboral`
+  - `DELETE /index.php?type=laboral`
+
+- **Ofertas Laborales**:
+  - `GET /index.php?type=oferta`
+  - `POST /index.php?type=oferta`
+  - `PUT /index.php?type=oferta`
+  - `DELETE /index.php?type=oferta`
+
+- **Postulaciones**:
+  - `GET /index.php?type=postulacion`
+  - `POST /index.php?type=postulacion`
+  - `PUT /index.php?type=postulacion`
+  - `DELETE /index.php?type=postulacion`
+
+- **Usuarios**:
+  - `GET /index.php?type=usuario`
+  - `POST /index.php?type=usuario`
+  - `PUT /index.php?type=usuario`
+  - `DELETE /index.php?type=usuario`
 
 ## Contributing
-Feel free to submit issues or pull requests for improvements or bug fixes.
+Si deseas contribuir, siéntete libre de enviar issues o pull requests para mejoras o correcciones de errores.
 
 ## License
-This project is licensed under the MIT License.
+Este proyecto está licenciado bajo la Licencia MIT.
