@@ -61,39 +61,85 @@ class PostulacionController {
         // Validar que el ID sea válido
         if (!ctype_digit($id)) {
             http_response_code(400);
-            echo json_encode(["error" => true, "message" => "El ID debe ser un número entero."]);
+            echo json_encode([
+                "error" => true,
+                "message" => "El ID debe ser un número entero."
+            ]);
             return;
         }
 
         // Validar que al menos un campo esté presente
         if (empty($data)) {
             http_response_code(400);
-            echo json_encode(["error" => true, "message" => "Debe proporcionar al menos un campo para actualizar."]);
+            echo json_encode([
+                "error" => true,
+                "message" => "Debe proporcionar al menos un campo para actualizar."
+            ]);
             return;
         }
 
         // Llamar al modelo para actualizar parcialmente
-        $success = $this->postulacionModel->actualizarParcial($id, $data);
-        if ($success) {
-            http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Postulación actualizada parcialmente."]);
-        } else {
+        try {
+            $success = $this->postulacionModel->actualizarParcial($id, $data);
+            if ($success) {
+                http_response_code(200);
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Postulación actualizada parcialmente."
+                ]);
+            } else {
+                http_response_code(500);
+                echo json_encode([
+                    "error" => true,
+                    "message" => "Error al actualizar la postulación."
+                ]);
+            }
+        } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(["error" => true, "message" => "Error al actualizar la postulación."]);
+            echo json_encode([
+                "error" => true,
+                "message" => $e->getMessage()
+            ]);
         }
     }
 
     public function eliminar($id) {
+        // Validar que el ID sea válido
+        if (!ctype_digit($id)) {
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "El ID debe ser un número entero."]);
+            return;
+        }
+
+        // Llamar al modelo para eliminar
         $success = $this->postulacionModel->eliminar($id);
-        echo json_encode(['success' => $success]);
+        if ($success) {
+            http_response_code(200);
+            echo json_encode(["success" => true, "message" => "Postulación eliminada correctamente."]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => true, "message" => "Error al eliminar la postulación."]);
+        }
     }
 
     public function obtenerUno($id) {
-        // Implementación para obtener una postulación por ID
-        http_response_code(200);
-        echo json_encode(array(
-            "message" => "Método obtenerUno ejecutado en PostulacionController con ID: $id"
-        ));
+        // Validar que el ID sea válido
+        if (!ctype_digit($id)) {
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "El ID debe ser un número entero."]);
+            return;
+        }
+
+        // Llamar al modelo para obtener una postulación
+        $result = $this->postulacionModel->obtenerUno($id);
+        if ($result) {
+            http_response_code(200);
+            echo json_encode($result);
+        } else {
+            http_response_code(404);
+            echo json_encode(["error" => true, "message" => "Postulación no encontrada."]);
+        }
     }
 }
+?>
 

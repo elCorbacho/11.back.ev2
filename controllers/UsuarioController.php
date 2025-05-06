@@ -9,93 +9,114 @@ class UsuarioController {
     }
 
     public function obtenerTodos() {
-        $result = $this->usuarioModel->obtenerTodos();
-        echo json_encode($result);
+        try {
+            $result = $this->usuarioModel->obtenerTodos();
+            $this->responder(200, $result);
+        } catch (Exception $e) {
+            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
+        }
     }
-
 
     public function registrar($data) {
-        $success = $this->usuarioModel->registrar($data);
-        echo json_encode(['success' => $success]);
-    }
-
-    public function actualizar($id, $data) {
-        $success = $this->usuarioModel->actualizar($id, $data);
-        echo json_encode(['success' => $success]);
-    }
-
-    public function actualizarCompleto($id, $data) {
-        // Validar que el ID sea válido
-        if (!ctype_digit($id)) {
-            http_response_code(400);
-            echo json_encode(["error" => true, "message" => "El ID debe ser un número entero."]);
+        if (!$this->validarDatos($data, ['campo1', 'campo2'])) {
             return;
         }
 
-        // Construir la consulta SQL para actualizar el recurso
-        $query = "UPDATE usuarios SET campo1 = :campo1, campo2 = :campo2 WHERE id = :id";
-        $stmt = $this->db->prepare($query);
+        try {
+            $success = $this->usuarioModel->registrar($data);
+            $this->responder(201, ["success" => $success]);
+        } catch (Exception $e) {
+            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
+        }
+    }
 
-        // Asignar valores a los parámetros
-        $stmt->bindParam(':campo1', $data['campo1']);
-        $stmt->bindParam(':campo2', $data['campo2']);
-        $stmt->bindParam(':id', $id);
+    public function actualizarCompleto($id, $data) {
+        if (!$this->validarId($id) || !$this->validarDatos($data, ['campo1', 'campo2'])) {
+            return;
+        }
 
-        // Ejecutar la consulta
-        if ($stmt->execute()) {
-            http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Usuario actualizado correctamente."]);
-        } else {
-            http_response_code(500);
-            echo json_encode(["error" => true, "message" => "Error al actualizar el usuario."]);
+        try {
+            $success = $this->usuarioModel->actualizarCompleto($id, $data);
+            $this->responder(200, ["success" => $success]);
+        } catch (Exception $e) {
+            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
         }
     }
 
     public function actualizarParcial($id, $data) {
-        // Validar que el ID sea válido
-        if (!ctype_digit($id)) {
-            http_response_code(400);
-            echo json_encode(["error" => true, "message" => "El ID debe ser un número entero."]);
+        if (!$this->validarId($id)) {
             return;
         }
-
-        // Construir la consulta SQL dinámicamente según los campos proporcionados
-        $fields = [];
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
+    
+        if (empty($data)) {
+            $this->responder(400, ["error" => true, "message" => "No se proporcionaron datos para actualizar."]);
+            return;
         }
-        $fieldsSql = implode(', ', $fields);
-
-        $query = "UPDATE usuarios SET $fieldsSql WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-
-        // Asignar valores a los parámetros
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-        $stmt->bindValue(':id', $id);
-
-        // Ejecutar la consulta
-        if ($stmt->execute()) {
-            http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Usuario actualizado parcialmente."]);
-        } else {
-            http_response_code(500);
-            echo json_encode(["error" => true, "message" => "Error al actualizar el usuario."]);
+    
+        try {
+            $success = $this->usuarioModel->actualizarParcial($id, $data);
+            if ($success) {
+                $this->responder(200, ["success" => true, "message" => "Usuario actualizado parcialmente."]);
+            } else {
+                $this->responder(400, ["error" => true, "message" => "No se pudo actualizar el usuario."]);
+            }
+        } catch (Exception $e) {
+            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
         }
     }
 
     public function eliminar($id) {
-        $success = $this->usuarioModel->eliminar($id);
-        echo json_encode(['success' => $success]);
+        if (!$this->validarId($id)) {
+            return;
+        }
+
+        try {
+            $success = $this->usuarioModel->eliminar($id);
+            $this->responder(200, ["success" => $success]);
+        } catch (Exception $e) {
+            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
+        }
     }
 
     public function obtenerUno($id) {
-        // Implementación para obtener un usuario por ID
-        http_response_code(200);
-        echo json_encode(array(
-            "message" => "Método obtenerUno ejecutado en UsuarioController con ID: $id"
-        ));
+        if (!$this->validarId($id)) {
+            return;
+        }
+
+        try {
+            $result = $this->usuarioModel->obtenerUno($id);
+            if ($result) {
+                $this->responder(200, $result);
+            } else {
+                $this->responder(404, ["error" => true, "message" => "Usuario no encontrado."]);
+            }
+        } catch (Exception $e) {
+            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
+        }
+    }
+
+    private function validarId($id) {
+        if (!ctype_digit($id)) {
+            $this->responder(400, ["error" => true, "message" => "El ID debe ser un número entero."]);
+            return false;
+        }
+        return true;
+    }
+
+    private function validarDatos($data, $requiredFields) {
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field])) {
+                $this->responder(400, ["error" => true, "message" => "Faltan campos requeridos: $field"]);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private function responder($statusCode, $data) {
+        http_response_code($statusCode);
+        echo json_encode($data);
     }
 }
+?>
 

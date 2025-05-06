@@ -6,7 +6,7 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
-// 
+//
 require_once './controllers/AntecedenteAcademicoController.php';
 require_once './controllers/AntecedenteLaboralController.php';
 require_once './controllers/OfertaLaboralController.php';
@@ -48,7 +48,7 @@ if (!$type) {
 $allowedTypes = ['academico', 'laboral', 'usuario', 'oferta', 'postulacion'];
 if (!in_array($type, $allowedTypes)) {
     http_response_code(400);
-    echo json_encode(array(   
+    echo json_encode(value: array(
         "error" => true,
         "message" => "El parámetro 'type' no es válido. Valores permitidos: 'academico', 'laboral', 'usuario', 'oferta', 'postulacion'."
     ));
