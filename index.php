@@ -1,5 +1,5 @@
 <?php
-//BRANCH_AC
+//BRANCH_AC_PROFILES
 // Permite el acceso a la API desde cualquier origen (CORS)
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
