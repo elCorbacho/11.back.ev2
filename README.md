@@ -1,9 +1,11 @@
-# PHP API Project
+# Proyecto API REST en PHP
 
-## Overview
-Este proyecto es una API desarrollada en PHP que implementa controladores y modelos para manejar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) para múltiples recursos. Está estructurado para proporcionar una clara separación de responsabilidades, facilitando su mantenimiento y escalabilidad.
+## Descripción General
 
-## Project Structure
+Este proyecto corresponde a una API desarrollada en PHP que implementa el patrón de arquitectura MVC (Modelo–Vista–Controlador), permitiendo realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre distintos recursos del sistema. La aplicación está diseñada para mantener una separación clara de responsabilidades, facilitando su escalabilidad, mantenibilidad y reutilización en otros entornos o proyectos.
+
+## Estructura del Proyecto
+
 ```
 11.back.ev2
 ├── controllers
@@ -24,70 +26,104 @@ Este proyecto es una API desarrollada en PHP que implementa controladores y mode
 └── README.md
 ```
 
-## Setup Instructions
+## Requisitos Previos
+
+- PHP 8.x o superior  
+- Servidor web local (como XAMPP o MAMP) o el servidor embebido de PHP  
+- Motor de base de datos MySQL  
+- Postman o herramienta similar para pruebas de API  
+
+## Configuración Inicial
+
 1. Clona el repositorio:
    ```bash
    git clone <repository-url>
    ```
 
-2. Navega al directorio del proyecto:
+2. Accede al directorio del proyecto:
    ```bash
    cd 11.back.ev2
    ```
 
-3. Configura la conexión a la base de datos en `config/database.php` con tus credenciales de base de datos.
+3. Configura la conexión a la base de datos editando el archivo `config/database.php` con tus credenciales:
+   ```php
+   private $host = 'localhost';
+   private $db_name = 'nombre_base_datos';
+   private $username = 'usuario';
+   private $password = 'contraseña';
+   ```
 
-4. Inicia el servidor local (por ejemplo, usando XAMPP o el servidor integrado de PHP):
+4. Inicia el servidor local (puedes usar XAMPP o el servidor integrado de PHP):
    ```bash
    php -S localhost:8000
    ```
 
-5. Accede a la API en tu navegador o herramienta como Postman:
+5. Accede a la API desde tu navegador o mediante una herramienta como Postman:
    ```
    http://localhost:8000/index.php
    ```
 
-## API Usage
-La API soporta las siguientes operaciones para cada recurso:
+## Uso de la API
 
-- **GET**: Obtener datos.
-- **POST**: Crear un nuevo registro.
-- **PUT**: Actualizar un registro existente.
-- **DELETE**: Eliminar un registro.
+La API admite las siguientes operaciones HTTP para cada recurso:
 
-### Endpoints Disponibles
-- **Antecedentes Académicos**:
-  - `GET /index.php?type=academico`
-  - `POST /index.php?type=academico`
-  - `PUT /index.php?type=academico`
-  - `DELETE /index.php?type=academico`
+- `GET`: Obtener uno o más registros  
+- `POST`: Crear un nuevo registro  
+- `PUT`: Reemplazar un recurso completamente  
+- `PATCH`: Actualizar campos específicos  
+- `DELETE`: Eliminar lógicamente un registro (estado = "Inactivo")  
 
-- **Antecedentes Laborales**:
-  - `GET /index.php?type=laboral`
-  - `POST /index.php?type=laboral`
-  - `PUT /index.php?type=laboral`
-  - `DELETE /index.php?type=laboral`
+## Endpoints Disponibles
 
-- **Ofertas Laborales**:
-  - `GET /index.php?type=oferta`
-  - `POST /index.php?type=oferta`
-  - `PUT /index.php?type=oferta`
-  - `DELETE /index.php?type=oferta`
+### Usuarios
 
-- **Postulaciones**:
-  - `GET /index.php?type=postulacion`
-  - `POST /index.php?type=postulacion`
-  - `PUT /index.php?type=postulacion`
-  - `DELETE /index.php?type=postulacion`
+- `GET /index.php?type=usuario`  
+- `GET /index.php?type=usuario&id={id}`  
+- `POST /index.php?type=usuario`  
+- `PUT /index.php?type=usuario&id={id}`  
+- `PATCH /index.php?type=usuario&id={id}`  
+- `DELETE /index.php?type=usuario&id={id}`  
 
-- **Usuarios**:
-  - `GET /index.php?type=usuario`
-  - `POST /index.php?type=usuario`
-  - `PUT /index.php?type=usuario`
-  - `DELETE /index.php?type=usuario`
+### Antecedentes Académicos
 
-## Contributing
-Si deseas contribuir, siéntete libre de enviar issues o pull requests para mejoras o correcciones de errores.
+- `GET /index.php?type=academico`  
+- `GET /index.php?type=academico&id={id}`  
+- `POST /index.php?type=academico`  
+- `PUT /index.php?type=academico&id={id}`  
+- `PATCH /index.php?type=academico&id={id}`  
+- `DELETE /index.php?type=academico&id={id}`  
 
-## License
-Este proyecto está licenciado bajo la Licencia MIT.
+### Antecedentes Laborales
+
+- `GET /index.php?type=laboral`  
+- `GET /index.php?type=laboral&id={id}`  
+- `POST /index.php?type=laboral`  
+- `PUT /index.php?type=laboral&id={id}`  
+- `PATCH /index.php?type=laboral&id={id}`  
+- `DELETE /index.php?type=laboral&id={id}`  
+
+### Ofertas Laborales
+
+- `GET /index.php?type=oferta`  
+- `GET /index.php?type=oferta&id={id}`  
+- `POST /index.php?type=oferta`  
+- `PUT /index.php?type=oferta&id={id}`  
+- `PATCH /index.php?type=oferta&id={id}`  
+- `DELETE /index.php?type=oferta&id={id}`  
+
+### Postulaciones
+
+- `GET /index.php?type=postulacion`  
+- `GET /index.php?type=postulacion&id={id}`  
+- `POST /index.php?type=postulacion`  
+- `PUT /index.php?type=postulacion&id={id}`  
+- `PATCH /index.php?type=postulacion&id={id}`  
+- `DELETE /index.php?type=postulacion&id={id}`  
+
+## Contribuciones
+
+Contribuciones son bienvenidas. Si deseas colaborar, puedes crear un issue para reportar errores o proponer mejoras. También puedes enviar un pull request con tus aportes.
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT. Puedes consultarla en el archivo `LICENSE`.
