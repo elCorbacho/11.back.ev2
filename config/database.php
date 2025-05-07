@@ -1,21 +1,19 @@
 <?php
 //branc_ac
 class Database {
-    private $host = 'localhost';
-    private $dbname = 'cliente_feliz';
-    private $username = 'usuario_feliz';
-    private $password = 'feliz2025';
+    private $host = "localhost";
+    private $db_name = "cliente_feliz";
+    private $username = "root";
+    private $password = "";
     public $conn;
 
-
-    public function getConnection () {
+    public function getConnection() {
         $this->conn = null;
-
         try {
-            $this->conn = new PDO("mysql:host={$this->host};dbname={$this->dbname}", $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->exec("set names utf8");
         } catch (PDOException $exception) {
-            echo "Error de conexión: " . $exception->getMessage();
+            echo "Connection error: " . $exception->getMessage();
         }
         return $this->conn;
     }

@@ -1,5 +1,5 @@
 <?php
-//branc_ac
+//BRANCH_AC
 require_once './models/Usuario.php';
 
 class UsuarioController {
@@ -9,115 +9,160 @@ class UsuarioController {
         $this->usuarioModel = new Usuario($db);
     }
 
-    public function obtenerTodos() {
+    // Listar todos los usuarios
+    public function listar() {
         try {
-            $result = $this->usuarioModel->obtenerTodos();
-            $this->responder(200, $result);
+            return $this->usuarioModel->obtenerTodos();
         } catch (Exception $e) {
-            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
+            http_response_code(500);
+            return [
+                "error" => true,
+                "message" => "Error al listar usuarios: " . $e->getMessage()
+            ];
         }
     }
 
-    public function registrar($data) {
-        if (!$this->validarDatos($data, ['campo1', 'campo2'])) {
-            return;
-        }
-
-        try {
-            $success = $this->usuarioModel->registrar($data);
-            $this->responder(201, ["success" => $success]);
-        } catch (Exception $e) {
-            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
-        }
-    }
-
-    public function actualizarCompleto($id, $data) {
-        if (!$this->validarId($id) || !$this->validarDatos($data, ['campo1', 'campo2'])) {
-            return;
-        }
-
-        try {
-            $success = $this->usuarioModel->actualizarCompleto($id, $data);
-            $this->responder(200, ["success" => $success]);
-        } catch (Exception $e) {
-            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
-        }
-    }
-
-    public function actualizarParcial($id, $data) {
-        if (!$this->validarId($id)) {
-            return;
-        }
-    
-        if (empty($data)) {
-            $this->responder(400, ["error" => true, "message" => "No se proporcionaron datos para actualizar."]);
-            return;
-        }
-    
-        try {
-            $success = $this->usuarioModel->actualizarParcial($id, $data);
-            if ($success) {
-                $this->responder(200, ["success" => true, "message" => "Usuario actualizado parcialmente."]);
-            } else {
-                $this->responder(400, ["error" => true, "message" => "No se pudo actualizar el usuario."]);
-            }
-        } catch (Exception $e) {
-            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
-        }
-    }
-
-    public function eliminar($id) {
-        if (!$this->validarId($id)) {
-            return;
-        }
-
-        try {
-            $success = $this->usuarioModel->eliminar($id);
-            $this->responder(200, ["success" => $success]);
-        } catch (Exception $e) {
-            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
-        }
-    }
-
+    // Obtener un usuario por ID
     public function obtenerUno($id) {
         if (!$this->validarId($id)) {
-            return;
+            http_response_code(400);
+            return [
+                "error" => true,
+                "message" => "El ID debe ser un número entero."
+            ];
         }
 
         try {
-            $result = $this->usuarioModel->obtenerUno($id);
-            if ($result) {
-                $this->responder(200, $result);
+            $usuario = $this->usuarioModel->obtenerUno($id);
+            if ($usuario) {
+                return $usuario;
             } else {
-                $this->responder(404, ["error" => true, "message" => "Usuario no encontrado."]);
+                http_response_code(404);
+                return [
+                    "error" => true,
+                    "message" => "Usuario no encontrado."
+                ];
             }
         } catch (Exception $e) {
-            $this->responder(500, ["error" => true, "message" => $e->getMessage()]);
+            http_response_code(500);
+            return [
+                "error" => true,
+                "message" => "Error al obtener usuario: " . $e->getMessage()
+            ];
         }
     }
 
-    private function validarId($id) {
-        if (!ctype_digit($id)) {
-            $this->responder(400, ["error" => true, "message" => "El ID debe ser un número entero."]);
-            return false;
+    // Crear nuevo usuario
+    public function crear($data) {
+        try {
+            $resultado = $this->usuarioModel->registrar($data);
+            http_response_code(201);
+            return [
+                "success" => $resultado,
+                "message" => "Usuario registrado correctamente."
+            ];
+        } catch (Exception $e) {
+            http_response_code(500);
+            return [
+                "error" => true,
+                "message" => "Error al registrar usuario: " . $e->getMessage()
+            ];
         }
-        return true;
     }
 
-    private function validarDatos($data, $requiredFields) {
-        foreach ($requiredFields as $field) {
-            if (!isset($data[$field])) {
-                $this->responder(400, ["error" => true, "message" => "Faltan campos requeridos: $field"]);
-                return false;
+    // Actualización completa (PUT)
+    public function actualizarCompleto($id, $data) {
+        if (!$this->validarId($id)) {
+            http_response_code(400);
+            return [
+                "error" => true,
+                "message" => "ID inválido. Debe ser un número entero."
+            ];
+        }
+
+        try {
+            $resultado = $this->usuarioModel->actualizarCompleto($id, $data);
+            return [
+                "success" => $resultado,
+                "message" => "Usuario actualizado correctamente (completo)."
+            ];
+        } catch (Exception $e) {
+            http_response_code(500);
+            return [
+                "error" => true,
+                "message" => "Error al actualizar usuario: " . $e->getMessage()
+            ];
+        }
+    }
+
+    // Actualización parcial (PATCH)
+    public function actualizarParcial($id, $data) {
+        if (!$this->validarId($id)) {
+            http_response_code(400);
+            return [
+                "error" => true,
+                "message" => "ID inválido. Debe ser un número entero."
+            ];
+        }
+
+        if (empty($data)) {
+            http_response_code(400);
+            return [
+                "error" => true,
+                "message" => "No se proporcionaron datos para actualizar."
+            ];
+        }
+
+        try {
+            $resultado = $this->usuarioModel->actualizarParcial($id, $data);
+            if ($resultado) {
+                return [
+                    "success" => true,
+                    "message" => "Usuario actualizado parcialmente."
+                ];
+            } else {
+                http_response_code(400);
+                return [
+                    "error" => true,
+                    "message" => "No se pudo actualizar el usuario."
+                ];
             }
+        } catch (Exception $e) {
+            http_response_code(500);
+            return [
+                "error" => true,
+                "message" => "Error al actualizar usuario: " . $e->getMessage()
+            ];
         }
-        return true;
     }
 
-    private function responder($statusCode, $data) {
-        http_response_code($statusCode);
-        echo json_encode($data);
+    // Eliminar usuario por ID
+    public function eliminar($id) {
+        if (!$this->validarId($id)) {
+            http_response_code(400);
+            return [
+                "error" => true,
+                "message" => "ID inválido. Debe ser un número entero."
+            ];
+        }
+
+        try {
+            $resultado = $this->usuarioModel->eliminar($id);
+            return [
+                "success" => $resultado,
+                "message" => "Usuario eliminado correctamente."
+            ];
+        } catch (Exception $e) {
+            http_response_code(500);
+            return [
+                "error" => true,
+                "message" => "Error al eliminar usuario: " . $e->getMessage()
+            ];
+        }
+    }
+
+    // Validar si el ID es numérico
+    private function validarId($id) {
+        return ctype_digit($id);
     }
 }
-?>
-

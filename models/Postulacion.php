@@ -2,7 +2,7 @@
 //branc_ac
 class Postulacion {
     private $db;
-    private $table = 'postulaciones'; // Define the table name
+    private $table = 'postulacion'; // Define the table name
 
     public function __construct($db) {
         $this->db = $db;

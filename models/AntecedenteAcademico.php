@@ -1,17 +1,17 @@
 <?php
 //branc_ac
 class AntecedenteAcademico {
-    private $conn;
-    private $table = 'antecedenteacademico';
+    private $db;
+    private $table = 'antecedenteacademico'; // Define the table name
 
     public function __construct($db) {
-        $this->conn = $db;
+        $this->db = $db;
     }
 
     // Listar todos los antecedentes académicos
     public function listar() {
-        $query = "SELECT id, candidato_id, institucion, titulo_obtenido, anio_ingreso, anio_egreso FROM $this->table";
-        $stmt = $this->conn->prepare($query);
+        $query = "SELECT * FROM $this->table";
+        $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -19,7 +19,7 @@ class AntecedenteAcademico {
     // Obtener un antecedente académico por su ID
     public function obtenerPorId($id) {
         $query = "SELECT id, candidato_id, institucion, titulo_obtenido, anio_ingreso, anio_egreso FROM $this->table WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -33,7 +33,7 @@ class AntecedenteAcademico {
 
         $query = "INSERT INTO $this->table (candidato_id, institucion, titulo_obtenido, anio_ingreso, anio_egreso)
                   VALUES (:candidato_id, :institucion, :titulo_obtenido, :anio_ingreso, :anio_egreso)";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->db->prepare($query);
         $stmt->bindValue(':candidato_id', $data['candidato_id'], PDO::PARAM_INT);
         $stmt->bindValue(':institucion', $data['institucion'], PDO::PARAM_STR);
         $stmt->bindValue(':titulo_obtenido', $data['titulo_obtenido'], PDO::PARAM_STR);
@@ -58,14 +58,14 @@ class AntecedenteAcademico {
         $sql = "UPDATE $this->table SET " . implode(", ", $fields) . " WHERE id = :id";
         $params[":id"] = $id;
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         return $stmt->execute($params); // Return true if successful, false otherwise
     }
 
     // Eliminar un antecedente académico
     public function eliminar($id) {
         $query = "DELETE FROM $this->table WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
         return $stmt->execute();
     }

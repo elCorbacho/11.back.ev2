@@ -1,136 +1,117 @@
 <?php
-//branc_ac
-// permite el acceso a la API desde cualquier origen
+// BRANCH_AC
 require_once './models/AntecedenteAcademico.php';
 
-// controller para manejar las solicitudes relacionadas con antecedentes académicos
-class AntecedenteAcademicoController { 
+class AntecedenteAcademicoController {
     private $antecedenteAcademico;
 
     public function __construct($db) {
         $this->antecedenteAcademico = new AntecedenteAcademico($db);
     }
 
-    public function manejarSolicitud() {
+    // Listar todos los antecedentes académicos
+    public function listar() {
         try {
-            switch ($_SERVER['REQUEST_METHOD']) {
-                case 'GET':
-                    $this->manejarGet();
-                    break;
-                case 'POST':
-                    $this->manejarPost();
-                    break;
-                case 'PUT':
-                    $this->manejarPut();
-                    break;
-                case 'DELETE':
-                    $this->manejarDelete();
-                    break;
-                default:
-                    http_response_code(405);
-                    echo json_encode(['error' => 'Método no permitido']);
-                    break;
+            return $this->antecedenteAcademico->listar();
+        } catch (Exception $e) {
+            http_response_code(500);
+            return ['error' => true, 'message' => $e->getMessage()];
+        }
+    }
+
+    // Obtener un antecedente académico por ID
+    public function obtenerUno($id) {
+        if (!ctype_digit($id)) {
+            http_response_code(400);
+            return ['error' => true, 'message' => 'ID inválido'];
+        }
+
+        try {
+            $resultado = $this->antecedenteAcademico->obtenerPorId($id);
+            if ($resultado) {
+                return $resultado;
+            } else {
+                http_response_code(404);
+                return ['error' => true, 'message' => 'Antecedente académico no encontrado'];
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'Error del servidor', 'mensaje' => $e->getMessage()]);
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
-    private function manejarGet() {
-        if (isset($_GET['id'])) {
-            $resultado = $this->antecedenteAcademico->obtenerPorId($_GET['id']);
-            if ($resultado) {
-                http_response_code(200);
-                echo json_encode($resultado);
+    // Crear nuevo antecedente académico
+    public function crear($data) {
+        if (
+            empty($data['candidato_id']) ||
+            empty($data['institucion']) ||
+            empty($data['titulo_obtenido']) ||
+            empty($data['anio_ingreso']) ||
+            empty($data['anio_egreso'])
+        ) {
+            http_response_code(400);
+            return ['error' => true, 'message' => 'Datos incompletos'];
+        }
+
+        try {
+            $success = $this->antecedenteAcademico->crear($data);
+            if ($success) {
+                http_response_code(201);
+                return ['success' => true, 'message' => 'Antecedente académico creado correctamente'];
+            } else {
+                http_response_code(500);
+                return ['error' => true, 'message' => 'No se pudo crear el antecedente académico'];
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            return ['error' => true, 'message' => $e->getMessage()];
+        }
+    }
+
+    // Actualización completa (PUT)
+    public function actualizarCompleto($id, $data) {
+        if (!ctype_digit($id)) {
+            http_response_code(400);
+            return ['error' => true, 'message' => 'ID inválido'];
+        }
+
+        try {
+            $success = $this->antecedenteAcademico->actualizar($id, $data);
+            if ($success) {
+                return ['success' => true];
             } else {
                 http_response_code(404);
-                echo json_encode(['error' => 'Antecedente académico no encontrado']);
+                return ['error' => true, 'message' => 'No se pudo actualizar el antecedente académico'];
             }
-        } else {
-            http_response_code(200);
-            echo json_encode($this->antecedenteAcademico->listar());
-        }
-    }
-
-    private function manejarPost() {
-        $data = json_decode(file_get_contents("php://input"), true);
-        if (!$data || empty($data)) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos JSON inválidos o vacíos']);
-            return;
-        }
-
-        $this->crear($data);
-    }
-
-    private function manejarPut() {
-        $data = json_decode(file_get_contents("php://input"), true);
-        if (!isset($data['id'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'ID requerido para actualizar']);
-            return;
-        }
-
-        $success = $this->antecedenteAcademico->actualizar($data['id'], $data);
-        if ($success) {
-            http_response_code(200);
-            echo json_encode(['success' => true]);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'No se pudo actualizar el antecedente académico']);
-        }
-    }
-
-    private function manejarDelete() {
-        $data = json_decode(file_get_contents("php://input"), true);
-        if (!isset($data['id'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'ID requerido para eliminar']);
-            return;
-        }
-
-        $success = $this->antecedenteAcademico->eliminar($data['id']);
-        if ($success) {
-            http_response_code(200);
-            echo json_encode(['success' => true]);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'No se pudo eliminar o no existe']);
-        }
-    }
-
-    public function crear($data) {
-        // Validar los datos antes de pasarlos al modelo
-        if (empty($data['titulo']) || empty($data['institucion']) || empty($data['fecha_inicio']) || empty($data['fecha_fin'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos incompletos']);
-            return;
-        }
-
-        // Llamar al modelo para crear el registro
-        $success = $this->antecedenteAcademico->crear($data);
-        if ($success) {
-            http_response_code(201);
-            echo json_encode(['success' => true]);
-        } else {
+        } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => 'No se pudo crear el antecedente académico']);
+            return ['error' => true, 'message' => $e->getMessage()];
         }
     }
 
-    public function obtenerUno($id) {
-        // Implementación para obtener un antecedente académico por ID
-        http_response_code(200);
-        echo json_encode(array(
-            "message" => "Método obtenerUno ejecutado en AntecedenteAcademicoController con ID: $id"
-        ));
+    // Actualización parcial (igual a la completa por ahora)
+    public function actualizarParcial($id, $data) {
+        return $this->actualizarCompleto($id, $data);
+    }
+
+    // Eliminar un antecedente académico
+    public function eliminar($id) {
+        if (!ctype_digit($id)) {
+            http_response_code(400);
+            return ['error' => true, 'message' => 'ID inválido'];
+        }
+
+        try {
+            $success = $this->antecedenteAcademico->eliminar($id);
+            if ($success) {
+                return ['success' => true];
+            } else {
+                http_response_code(404);
+                return ['error' => true, 'message' => 'No se pudo eliminar o no existe'];
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            return ['error' => true, 'message' => $e->getMessage()];
+        }
     }
 }
-
-// Crear instancia del controlador y manejar la solicitud
-require_once './config/database.php';
-$db = (new Database())->getConnection();
-$controller = new AntecedenteAcademicoController($db);
-$controller->manejarSolicitud();
-
