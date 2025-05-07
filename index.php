@@ -6,13 +6,13 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
-// Maneja solicitudes OPTIONS (preflight)
+// Se usa para manejar las solicitudes preflight de CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// Inclusión de controladores y configuración
+// listado de controladores
 require_once './controllers/AntecedenteAcademicoController.php';
 require_once './controllers/AntecedenteLaboralController.php';
 require_once './controllers/OfertaLaboralController.php';
@@ -31,6 +31,7 @@ if (!$type) {
     exit;
 }
 
+// Validar que el tipo sea uno de los permitidos
 $allowedTypes = ['academico', 'laboral', 'usuario', 'oferta', 'postulacion'];
 if (!in_array($type, $allowedTypes)) {
     http_response_code(400);
@@ -71,10 +72,14 @@ $id = $_GET['id'] ?? null;
 // Procesamiento de la solicitud
 try {
     switch ($method) {
+    // Métodos HTTP
+    // GET, POST, PUT, PATCH, DELETE
+        // GET: Obtener uno o varios registros
         case 'GET':
             $response = $id ? $controller->obtenerUno($id) : $controller->listar();
             break;
-
+            
+        // POST: Crear un nuevo registro
         case 'POST':
             $data = json_decode(file_get_contents("php://input"), true);
             if (!$data) {
