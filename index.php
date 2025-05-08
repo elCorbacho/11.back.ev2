@@ -1,5 +1,5 @@
 <?php
-//BRANCH_AC_CORRECCION DE PATCH
+//BRANCH_PARA PERFILES
 // Permite el acceso a la API desde cualquier origen (CORS)
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
