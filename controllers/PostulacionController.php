@@ -34,6 +34,7 @@ class PostulacionController {
         }
     }
 
+    // Obtener postulaciones por ID de oferta
     public function obtenerUno($id) {
         if (!ctype_digit($id)) {
             http_response_code(400);

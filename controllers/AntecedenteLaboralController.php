@@ -2,13 +2,17 @@
 // BRANCH_AC
 require_once './models/AntecedenteLaboral.php';
 
+
+// Controlador para manejar las operaciones de antecedentes laborales
 class AntecedenteLaboralController {
     private $antecedenteLaboral;
 
+    // Constructor que inicializa el modelo de antecedentes laborales
     public function __construct($db) {
         $this->antecedenteLaboral = new AntecedenteLaboral($db);
     }
 
+    // Listar todos los antecedentes laborales
     public function listar() {
         try {
             return $this->antecedenteLaboral->listar();
@@ -18,6 +22,7 @@ class AntecedenteLaboralController {
         }
     }
 
+    // Obtener un antecedente laboral por ID
     public function obtenerUno($id) {
         if (!ctype_digit($id)) {
             http_response_code(400);
@@ -38,6 +43,7 @@ class AntecedenteLaboralController {
         }
     }
 
+    // Crear un nuevo antecedente laboral
     public function crear($data) {
         if (!is_array($data) || empty($data)) {
             http_response_code(400);
@@ -59,12 +65,14 @@ class AntecedenteLaboralController {
         }
     }
 
+    // Actualizar un antecedente laboral (completo o parcial)
     public function actualizarCompleto($id, $data) {
         if (!ctype_digit($id)) {
             http_response_code(400);
             return ['error' => true, 'message' => 'ID inválido o faltante'];
         }
 
+        // Validar que los datos sean un array y no estén vacíos
         try {
             $success = $this->antecedenteLaboral->actualizar($id, $data);
             if ($success) {
@@ -78,12 +86,12 @@ class AntecedenteLaboralController {
             return ['error' => true, 'message' => $e->getMessage()];
         }
     }
-
+    // Actualizar un antecedente laboral (parcial)
     public function actualizarParcial($id, $data) {
-        // Este método puede ser idéntico o ajustado si necesitas lógica diferente
         return $this->actualizarCompleto($id, $data);
     }
 
+    // Eliminar un antecedente laboral por ID
     public function eliminar($id) {
         if (!ctype_digit($id)) {
             http_response_code(400);

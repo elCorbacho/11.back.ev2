@@ -2,13 +2,17 @@
 // BRANCH_AC
 require_once './models/OfertaLaboral.php';
 
+
+// Controlador para manejar las operaciones de ofertas laborales
 class OfertaLaboralController {
     private $ofertaModel;
 
+    // Constructor que inicializa el modelo de ofertas laborales
     public function __construct($db) {
         $this->ofertaModel = new OfertaLaboral($db);
     }
 
+    // Listar todas las ofertas laborales
     public function listar() {
         try {
             return $this->ofertaModel->listar();
@@ -18,6 +22,7 @@ class OfertaLaboralController {
         }
     }
 
+    // Listar ofertas laborales por reclutador
     public function obtenerUno($id) {
         if (!ctype_digit($id)) {
             http_response_code(400);
@@ -33,6 +38,7 @@ class OfertaLaboralController {
         }
     }
 
+    // Crear una nueva oferta laboral
     public function crear($data) {
         if (!$data || empty($data)) {
             http_response_code(400);
@@ -54,6 +60,7 @@ class OfertaLaboralController {
         }
     }
 
+    // Actualizar una oferta laboral por ID (PUT)
     public function actualizarCompleto($id, $data) {
         if (!ctype_digit($id)) {
             http_response_code(400);
@@ -74,18 +81,18 @@ class OfertaLaboralController {
         }
     }
 
-// Actualización parcial (PATCH) CORREGIDO
-public function actualizarParcial($id, $data) {
-    if (!ctype_digit($id)) {
-        http_response_code(400);
-        return ['error' => true, 'message' => 'ID inválido'];
-    }
+    // Actualización parcial (PATCH) CORREGIDO
+    public function actualizarParcial($id, $data) {
+        if (!ctype_digit($id)) {
+            http_response_code(400);
+            return ['error' => true, 'message' => 'ID inválido'];
+        }
 
-    $ofertaActual = $this->ofertaModel->obtenerPorId($id);
-    if (!$ofertaActual) {
-        http_response_code(404);
-        return ['error' => true, 'message' => 'Oferta no encontrada'];
-    }
+        $ofertaActual = $this->ofertaModel->obtenerPorId($id);
+        if (!$ofertaActual) {
+            http_response_code(404);
+            return ['error' => true, 'message' => 'Oferta no encontrada'];
+        }
 
     // Reemplaza solo los campos presentes en $data, el resto se conserva
     $datosActualizados = [
@@ -113,11 +120,8 @@ public function actualizarParcial($id, $data) {
         return ['error' => true, 'message' => $e->getMessage()];
     }
 }
-// Actualización parcial (PATCH) CORREGIDO
-
-
-
-
+    
+    // Eliminar una oferta laboral por ID
     public function eliminar($id) {
         if (!ctype_digit($id)) {
             http_response_code(400);
