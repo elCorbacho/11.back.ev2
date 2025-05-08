@@ -180,13 +180,26 @@ class Postulacion {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    // Postular a una oferta laboral
     public function postular($data) {
+        // Asignar valor por defecto si no se entrega estado_postulacion
+        $data['estado_postulacion'] = $data['estado_postulacion'] ?? 'Postulando';
+        
+        // Asignar comentario por defecto si no se entrega
+        $data['comentario'] = $data['comentario'] ?? 'Postulación iniciada.';
+        
+        // Fecha de postulación y actualización actual
+        $data['fecha_postulacion'] = date('Y-m-d H:i:s');
+        $data['fecha_actualizacion'] = date('Y-m-d H:i:s');
+    
+        // Preparar consulta
         $query = "INSERT INTO $this->table (
             candidato_id,
             oferta_laboral_id,
             estado_postulacion,
             comentario,
-            fecha_postulacion,  
+            fecha_postulacion,
             fecha_actualizacion
         ) VALUES (
             :candidato_id,
