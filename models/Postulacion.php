@@ -117,8 +117,7 @@ class Postulacion {
     public function postulanteasociado_oferta() {
         $query = "
             SELECT 
-                u.nombre AS nombre_postulante,
-                u.apellido AS apellido_postulante,
+                CONCAT(u.nombre, ' ', u.apellido) AS postulante,
                 o.titulo AS titulo_oferta
             FROM postulacion p
             INNER JOIN usuario u ON p.candidato_id = u.id
@@ -151,5 +150,64 @@ class Postulacion {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function existePostulacion($candidato_id, $oferta_id) {
+        $query = "SELECT COUNT(*) FROM $this->table WHERE candidato_id = :cid AND oferta_laboral_id = :oid";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':cid', $candidato_id);
+        $stmt->bindParam(':oid', $oferta_id);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // Listar postulantes por oferta laboral
+    public function postulantesPorOferta($id_oferta) {
+        $query = "
+            SELECT 
+                u.nombre AS nombre_postulante,
+                u.apellido AS apellido_postulante,
+                o.titulo AS titulo_oferta
+            FROM postulacion p
+            INNER JOIN usuario u ON p.candidato_id = u.id
+            INNER JOIN ofertalaboral o ON p.oferta_laboral_id = o.id
+            WHERE o.id = :id_oferta
+            ORDER BY u.apellido ASC
+        ";
+    
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id_oferta', $id_oferta, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function postular($data) {
+        $query = "INSERT INTO $this->table (
+            candidato_id,
+            oferta_laboral_id,
+            estado_postulacion,
+            comentario,
+            fecha_postulacion,  
+            fecha_actualizacion
+        ) VALUES (
+            :candidato_id,
+            :oferta_laboral_id,
+            :estado_postulacion,
+            :comentario,
+            :fecha_postulacion,
+            :fecha_actualizacion
+        )";
+    
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':candidato_id', $data['candidato_id']);
+        $stmt->bindParam(':oferta_laboral_id', $data['oferta_laboral_id']);
+        $stmt->bindParam(':estado_postulacion', $data['estado_postulacion']);
+        $stmt->bindParam(':comentario', $data['comentario']);
+        $stmt->bindParam(':fecha_postulacion', $data['fecha_postulacion']);
+        $stmt->bindParam(':fecha_actualizacion', $data['fecha_actualizacion']);
+    
+        return $stmt->execute();
+    }
+    
+
     
 }

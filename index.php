@@ -1,24 +1,30 @@
 <?php
 //BRANCH_PARA PERFILES
-// Permite el acceso a la API desde cualquier origen (CORS)
+// Permitir solicitudes CORS
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
-// Se usa para manejar las solicitudes preflight de CORS
+// Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// listado de controladores
+// Incluir controladores y base de datos
 require_once './controllers/AntecedenteAcademicoController.php';
 require_once './controllers/AntecedenteLaboralController.php';
 require_once './controllers/OfertaLaboralController.php';
 require_once './controllers/PostulacionController.php';
 require_once './controllers/UsuarioController.php';
 require_once './config/database.php';
+
+// Conexión a la base de datos
+$database = new Database();
+$db = $database->getConnection();
+
+
 
 // Validar parámetro 'type' desde la URL
 $type = $_GET['type'] ?? null;
@@ -32,7 +38,8 @@ if (!$type) {
 }
 
 // Validar que el tipo sea uno de los permitidos
-$allowedTypes = ['academico', 'laboral', 'usuario', 'oferta', 'postulacion'];
+$allowedTypes = ['academico', 'laboral', 'usuario', 'oferta', 'postulacion', 'reclutador', 'candidato'];
+
 if (!in_array($type, $allowedTypes)) {
     http_response_code(400);
     echo json_encode([
@@ -42,11 +49,10 @@ if (!in_array($type, $allowedTypes)) {
     exit;
 }
 
-// Crear conexión a base de datos
-$database = new Database();
-$db = $database->getConnection();
 
-// Asignar controlador según el tipo
+// ===================================================
+// ✅ INICIALIZAR CONTROLADORES
+// ===================================================
 switch ($type) {
     case 'academico':
         $controller = new AntecedenteAcademicoController($db);
@@ -65,9 +71,10 @@ switch ($type) {
         break;
 }
 
-// Listar postulaciones agrupadas por oferta
 
-// Método HTTP y parámetro 'id' (si existe)
+// ===================================================
+// ✅ VALIDAR ID Y MÉTODO
+// ===================================================
 $method = $_SERVER['REQUEST_METHOD'];
 $id = $_GET['id'] ?? null;
 
@@ -91,6 +98,87 @@ if (
     echo json_encode($controller->vistaBasicaPorCandidato($_GET['candidato_id']));
     exit;
 }
+
+if ($type === 'reclutador' && isset($_GET['action']) && $_GET['action'] === 'ver_postulantes' && isset($_GET['id'])) {
+    echo json_encode($controller->verPostulantes($_GET['id']));
+    exit;
+}
+
+
+// ===================================================
+// ✅ ENDPOINTS PERSONALIZADOS POR PERFIL
+// ===================================================
+
+// 📌 Reclutador
+if (isset($_GET['type']) && $_GET['type'] === 'reclutador') {
+    require_once './controllers/ReclutadorController.php';
+    $controller = new ReclutadorController($db);
+    $action = $_GET['action'] ?? null;
+
+    switch ($action) {
+        case 'crear_oferta':
+            $data = json_decode(file_get_contents("php://input"), true);
+            echo json_encode($controller->crearOferta($data));
+            exit;
+
+        case 'editar_oferta':
+            $id = $_GET['id'] ?? null;
+            $data = json_decode(file_get_contents("php://input"), true);
+            echo json_encode($controller->editarOferta($id, $data));
+            exit;
+
+        case 'desactivar_oferta':
+            $id = $_GET['id'] ?? null;
+            echo json_encode($controller->desactivarOferta($id));
+            exit;
+
+        case 'ver_postulantes':
+            $id_oferta = $_GET['id_oferta'] ?? null;
+            echo json_encode($controller->verTodosLosPostulantes());
+            exit;
+
+        case 'actualizar_estado_postulacion':
+            $id_postulacion = $_GET['id_postulacion'] ?? null;
+            $data = json_decode(file_get_contents("php://input"), true);
+            echo json_encode($controller->actualizarEstadoPostulacion($id_postulacion, $data));
+            exit;
+
+        default:
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "Acción no válida para reclutador."]);
+            exit;
+    }
+}
+
+// 📌 Candidato
+if (isset($_GET['type']) && $_GET['type'] === 'candidato') {
+    require_once './controllers/CandidatoController.php';
+    $controller = new CandidatoController($db);
+    $action = $_GET['action'] ?? null;
+
+    switch ($action) {
+        case 'ver_ofertas':
+            echo json_encode($controller->verOfertas());
+            exit;
+
+        case 'postular':
+            $id_oferta = $_GET['id_oferta'] ?? null;
+            $data = json_decode(file_get_contents("php://input"), true);
+            echo json_encode($controller->postular($id_oferta, $data));
+            exit;
+
+        case 'mis_postulaciones':
+            $id = $_GET['id'] ?? null;
+            echo json_encode($controller->misPostulaciones($id));
+            exit;
+
+        default:
+            http_response_code(400);
+            echo json_encode(["error" => true, "message" => "Acción no válida para candidato."]);
+            exit;
+    }
+}
+
 
 
 // Procesamiento de la solicitud

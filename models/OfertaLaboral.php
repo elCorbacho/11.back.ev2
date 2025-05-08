@@ -41,35 +41,7 @@ class OfertaLaboral {
     }
 
 
-    //actualizar corregido
-    public function actualizar($id, $data) {
-        $query = "UPDATE $this->table SET 
-            titulo = :titulo, 
-            descripcion = :descripcion, 
-            ubicacion = :ubicacion, 
-            salario = :salario, 
-            tipo_contrato = :tipo_contrato, 
-            fecha_publicacion = :fecha_publicacion,
-            fecha_cierre = :fecha_cierre,
-            estado = :estado,
-            reclutador_id = :reclutador_id
-            WHERE id = :id";
-    
-        $stmt = $this->conn->prepare($query);
-    
-        $stmt->bindParam(':titulo', $data['titulo']);
-        $stmt->bindParam(':descripcion', $data['descripcion']);
-        $stmt->bindParam(':ubicacion', $data['ubicacion']);
-        $stmt->bindParam(':salario', $data['salario']);
-        $stmt->bindParam(':tipo_contrato', $data['tipo_contrato']);
-        $stmt->bindParam(':fecha_publicacion', $data['fecha_publicacion']);
-        $stmt->bindParam(':fecha_cierre', $data['fecha_cierre']);
-        $stmt->bindParam(':estado', $data['estado']);
-        $stmt->bindParam(':reclutador_id', $data['reclutador_id']);
-        $stmt->bindParam(':id', $id);
-    
-        return $stmt->execute();
-    }
+
 //actualizar corregido
 
 
@@ -102,5 +74,26 @@ class OfertaLaboral {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function actualizar($id, $data) {
+        $campos = [];
+        $parametros = [];
+    
+        foreach ($data as $clave => $valor) {
+            $campos[] = "$clave = :$clave";
+            $parametros[":$clave"] = $valor;
+        }
+    
+        if (empty($campos)) {
+            return false;
+        }
+    
+        $sql = "UPDATE $this->table SET " . implode(", ", $campos) . " WHERE id = :id";
+        $parametros[":id"] = $id;
+    
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute($parametros);
+    }
+    
 }
 ?>
