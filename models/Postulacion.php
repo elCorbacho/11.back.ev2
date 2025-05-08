@@ -112,4 +112,23 @@ class Postulacion {
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
+
+    // Listar postulaciones con detalles de candidato y oferta
+    public function postulanteasociado_oferta() {
+        $query = "
+            SELECT 
+                u.nombre AS nombre_postulante,
+                u.apellido AS apellido_postulante,
+                o.titulo AS titulo_oferta
+            FROM postulacion p
+            INNER JOIN usuario u ON p.candidato_id = u.id
+            INNER JOIN ofertalaboral o ON p.oferta_laboral_id = o.id
+            ORDER BY o.titulo ASC, u.apellido ASC
+        ";
+    
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }

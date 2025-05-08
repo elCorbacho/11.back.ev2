@@ -65,20 +65,57 @@ switch ($type) {
         break;
 }
 
+// Listar postulaciones agrupadas por oferta
+
 // Método HTTP y parámetro 'id' (si existe)
 $method = $_SERVER['REQUEST_METHOD'];
 $id = $_GET['id'] ?? null;
+
+
+if ($type === 'postulacion' && isset($_GET['vista']) && $_GET['vista'] === 'postulanteasociado_oferta') {
+    echo json_encode($controller->postulanteasociado_oferta());
+    exit;
+}
+
+
 
 // Procesamiento de la solicitud
 try {
     switch ($method) {
     // Métodos HTTP
-    // GET, POST, PUT, PATCH, DELETE
-        // GET: Obtener uno o varios registros
+
+        // GET: Obtener uno o todos
+
         case 'GET':
+            // Si hay un parámetro GET llamado 'vista'
+            if ($type === 'postulacion' && isset($_GET['vista'])) {
+                if ($_GET['vista'] === 'postulanteasociado_oferta') {
+                    echo json_encode($controller->postulanteasociado_oferta());
+                    exit;
+                } else {
+                    http_response_code(400);
+                    $response = ["error" => true, "message" => "La vista proporcionada no es válida."];
+                    break;
+                }
+            }
+        
+            // Si hay otros parámetros GET no válidos
+            $parametros_validos = ['type', 'id'];
+            $parametros_recibidos = array_keys($_GET);
+            foreach ($parametros_recibidos as $param) {
+                if (!in_array($param, $parametros_validos)) {
+                    http_response_code(400);
+                    $response = ["error" => true, "message" => "Parámetro no válido: '$param'"];
+                    break 2;
+                }
+            }
+        
+            // GET estándar: listar o mostrar uno
             $response = $id ? $controller->obtenerUno($id) : $controller->listar();
             break;
-            
+        
+
+
         // POST: Crear un nuevo registro
         case 'POST':
             $data = json_decode(file_get_contents("php://input"), true);

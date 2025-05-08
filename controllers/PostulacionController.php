@@ -163,5 +163,16 @@ class PostulacionController {
     }
 
 
+    // Listar resumen de postulaciones
+    public function postulanteasociado_oferta() {
+        try {
+            return $this->postulacionModel->postulanteasociado_oferta();
+        } catch (Exception $e) {
+            http_response_code(500);
+            return ["error" => true, "message" => $e->getMessage()];
+        }
+    }
+
+
 
 }
