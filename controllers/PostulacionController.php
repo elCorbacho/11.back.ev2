@@ -174,6 +174,25 @@ class PostulacionController {
         }
     }
 
+    // Listar postulaciones por ID de candidato
+    public function vistaBasicaPorCandidato($candidato_id) {
+        if (!ctype_digit($candidato_id)) {
+            http_response_code(400);
+            return ["error" => true, "message" => "ID del candidato inválido."];
+        }
+    
+        try {
+            // NOMBRE CORRECTO del método del modelo
+            return $this->postulacionModel->vistaBasicaPorCandidato($candidato_id);
+        } catch (Exception $e) {
+            http_response_code(500);
+            return ["error" => true, "message" => $e->getMessage()];
+        }
+    }
+    
+    
+    
+
 
 
 }

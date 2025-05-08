@@ -79,5 +79,28 @@ class OfertaLaboral {
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
+
+    // Listar ofertas laborales vigentes
+    public function listarOfertasVigentes() {
+        $query = "
+            SELECT 
+                id,
+                titulo,
+                descripcion,
+                ubicacion,
+                salario,
+                tipo_contrato,
+                fecha_publicacion,
+                fecha_cierre,
+                estado
+            FROM ofertalaboral
+            WHERE estado = 'Vigente'
+            ORDER BY fecha_publicacion DESC
+        ";
+    
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

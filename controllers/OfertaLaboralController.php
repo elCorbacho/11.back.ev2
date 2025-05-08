@@ -141,4 +141,17 @@ class OfertaLaboralController {
             return ['error' => true, 'message' => $e->getMessage()];
         }
     }
+
+    // Listar ofertas laborales vigentes
+    public function vistaOfertasVigentes() {
+        try {
+            return $this->ofertaModel->listarOfertasVigentes();
+        } catch (Exception $e) {
+            http_response_code(500);
+            return ["error" => true, "message" => $e->getMessage()];
+        }
+    }
+
+
+
 }

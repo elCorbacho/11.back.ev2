@@ -130,5 +130,26 @@ class Postulacion {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    //vista de postulante y oferta asociada
+    public function vistaBasicaPorCandidato($candidato_id) {
+        $query = "
+            SELECT 
+                p.id AS id_postulacion,
+                CONCAT(u.nombre, ' ', u.apellido) AS postulante,
+                o.titulo AS titulo_oferta,
+                p.estado_postulacion,
+                p.comentario
+            FROM postulacion p
+            INNER JOIN usuario u ON p.candidato_id = u.id
+            INNER JOIN ofertalaboral o ON p.oferta_laboral_id = o.id
+            WHERE p.candidato_id = :candidato_id
+            ORDER BY p.fecha_postulacion DESC
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':candidato_id', $candidato_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 }

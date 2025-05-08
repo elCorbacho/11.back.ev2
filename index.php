@@ -77,6 +77,20 @@ if ($type === 'postulacion' && isset($_GET['vista']) && $_GET['vista'] === 'post
     exit;
 }
 
+if ($type === 'oferta' && isset($_GET['vista']) && $_GET['vista'] === 'vigentes') {
+    echo json_encode($controller->vistaOfertasVigentes());
+    exit;
+}
+
+if (
+    $type === 'postulacion' &&
+    isset($_GET['vista']) &&
+    $_GET['vista'] === 'basica_por_candidato' &&
+    isset($_GET['candidato_id'])
+) {
+    echo json_encode($controller->vistaBasicaPorCandidato($_GET['candidato_id']));
+    exit;
+}
 
 
 // Procesamiento de la solicitud
