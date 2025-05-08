@@ -1,83 +1,115 @@
 <?php
-//branc_ac
+// BRANCH_AC
 class Postulacion {
     private $db;
-    private $table = 'postulacion'; // Define the table name
+    private $table = 'postulacion';
 
     public function __construct($db) {
         $this->db = $db;
     }
 
-    public function postular($data) {
-        $query = "INSERT INTO $this->table (candidato_id, oferta_laboral_id, comentario) VALUES (:candidato_id, :oferta_laboral_id, :comentario)";
-        $stmt = $this->db->prepare($query); // Fixed $this->conn to $this->db
+    // Crear nueva postulación (POST)
+    public function crear($data) {
+        $query = "INSERT INTO $this->table (
+            candidato_id,
+            oferta_laboral_id,
+            estado_postulacion,
+            comentario,
+            fecha_postulacion,
+            fecha_actualizacion
+        ) VALUES (
+            :candidato_id,
+            :oferta_laboral_id,
+            :estado_postulacion,
+            :comentario,
+            :fecha_postulacion,
+            :fecha_actualizacion
+        )";
+
+        $stmt = $this->db->prepare($query);
         $stmt->bindParam(':candidato_id', $data['candidato_id']);
         $stmt->bindParam(':oferta_laboral_id', $data['oferta_laboral_id']);
+        $stmt->bindParam(':estado_postulacion', $data['estado_postulacion']);
         $stmt->bindParam(':comentario', $data['comentario']);
+        $stmt->bindParam(':fecha_postulacion', $data['fecha_postulacion']);
+        $stmt->bindParam(':fecha_actualizacion', $data['fecha_actualizacion']);
+
         return $stmt->execute();
     }
 
+    // Obtener todas las postulaciones
     public function listar() {
         $query = "SELECT * FROM $this->table";
-        $stmt = $this->db->prepare($query); // Fixed $this->conn to $this->db
+        $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Obtener postulaciones por ID de candidato
     public function listarPorCandidato($id) {
         $query = "SELECT * FROM $this->table WHERE candidato_id = :id";
-        $stmt = $this->db->prepare($query); // Fixed $this->conn to $this->db
+        $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function actualizar($id, $data) {
-        $query = "UPDATE $this->table SET comentario = :comentario WHERE id = :id";
-        $stmt = $this->db->prepare($query); // Fixed $this->conn to $this->db
-        $stmt->bindParam(':comentario', $data['comentario']);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
-    }
-
-    public function eliminar($id) {
-        $query = "DELETE FROM $this->table WHERE id = :id";
-        $stmt = $this->db->prepare($query); // Fixed $this->conn to $this->db
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
-    }
-
-    public function actualizarCompleto($id, $data) {
-        // Example implementation for updating a record completely
-        $query = "UPDATE postulaciones SET campo1 = :campo1, campo2 = :campo2 WHERE id = :id";
+    // Obtener una postulación por ID
+    public function obtenerUno($id) {
+        $query = "SELECT * FROM $this->table WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':campo1', $data['campo1']);
-        $stmt->bindParam(':campo2', $data['campo2']);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Actualización completa (PUT)
+    public function actualizarCompleto($id, $data) {
+        $query = "UPDATE $this->table SET 
+            estado_postulacion = :estado_postulacion,
+            comentario = :comentario,
+            fecha_postulacion = :fecha_postulacion,
+            fecha_actualizacion = :fecha_actualizacion
+        WHERE id = :id";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':estado_postulacion', $data['estado_postulacion']);
+        $stmt->bindParam(':comentario', $data['comentario']);
+        $stmt->bindParam(':fecha_postulacion', $data['fecha_postulacion']);
+        $stmt->bindParam(':fecha_actualizacion', $data['fecha_actualizacion']);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
         return $stmt->execute();
     }
 
+    // Actualización parcial (PATCH)
     public function actualizarParcial($id, $data) {
-        // Build the SQL query dynamically based on the provided fields
+        $permitidos = ['estado_postulacion', 'comentario', 'fecha_postulacion', 'fecha_actualizacion'];
         $fields = [];
         $params = [];
+
         foreach ($data as $key => $value) {
+            if (!in_array($key, $permitidos)) continue;
             $fields[] = "$key = :$key";
             $params[":$key"] = $value;
         }
 
-        $sql = "UPDATE postulaciones SET " . implode(", ", $fields) . " WHERE id = :id";
+        if (empty($fields)) {
+            return false; // Nada que actualizar
+        }
+
+        $sql = "UPDATE $this->table SET " . implode(", ", $fields) . " WHERE id = :id";
         $params[":id"] = $id;
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }
 
-    public function obtenerUno($id) {
-        $query = "SELECT * FROM $this->table WHERE id = :id";
+    // Eliminar postulación (DELETE)
+    public function eliminar($id) {
+        $query = "DELETE FROM $this->table WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC); // Return the record or false if not found
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
     }
 }

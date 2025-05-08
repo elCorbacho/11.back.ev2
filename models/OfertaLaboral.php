@@ -40,6 +40,8 @@ class OfertaLaboral {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+
+    //actualizar corregido
     public function actualizar($id, $data) {
         $query = "UPDATE $this->table SET 
             titulo = :titulo, 
@@ -47,21 +49,29 @@ class OfertaLaboral {
             ubicacion = :ubicacion, 
             salario = :salario, 
             tipo_contrato = :tipo_contrato, 
-            fecha_cierre = :fecha_cierre 
+            fecha_publicacion = :fecha_publicacion,
+            fecha_cierre = :fecha_cierre,
+            estado = :estado,
+            reclutador_id = :reclutador_id
             WHERE id = :id";
-
+    
         $stmt = $this->conn->prepare($query);
-
+    
         $stmt->bindParam(':titulo', $data['titulo']);
         $stmt->bindParam(':descripcion', $data['descripcion']);
         $stmt->bindParam(':ubicacion', $data['ubicacion']);
         $stmt->bindParam(':salario', $data['salario']);
         $stmt->bindParam(':tipo_contrato', $data['tipo_contrato']);
+        $stmt->bindParam(':fecha_publicacion', $data['fecha_publicacion']);
         $stmt->bindParam(':fecha_cierre', $data['fecha_cierre']);
+        $stmt->bindParam(':estado', $data['estado']);
+        $stmt->bindParam(':reclutador_id', $data['reclutador_id']);
         $stmt->bindParam(':id', $id);
-
+    
         return $stmt->execute();
     }
+//actualizar corregido
+
 
     public function eliminar($id) {
         $query = "DELETE FROM $this->table WHERE id = :id";

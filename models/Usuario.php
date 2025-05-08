@@ -103,10 +103,13 @@ class Usuario {
 
     // Actualización parcial (solo campos enviados)
     public function actualizarParcial($id, $data) {
+        $permitidos = ['nombre', 'apellido', 'email', 'contrasena', 'telefono', 'direccion', 'rol', 'fecha_nacimiento'];
         $campos = [];
         $parametros = [];
-
+    
         foreach ($data as $clave => $valor) {
+            if (!in_array($clave, $permitidos)) continue;
+    
             if ($clave === 'contrasena') {
                 $campos[] = "$clave = :$clave";
                 $parametros[":$clave"] = password_hash($valor, PASSWORD_DEFAULT);
@@ -115,13 +118,23 @@ class Usuario {
                 $parametros[":$clave"] = $valor;
             }
         }
-
+    
+        if (empty($campos)) {
+            return false;
+        }
+    
         $sql = "UPDATE $this->table SET " . implode(", ", $campos) . " WHERE id = :id";
         $parametros[":id"] = $id;
-
+    
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($parametros);
     }
+
+
+
+
+
+
 
     // Eliminar usuario (cambio de estado a inactivo)
     public function eliminar($id) {

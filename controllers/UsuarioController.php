@@ -33,7 +33,7 @@ class UsuarioController {
         }
 
         try {
-            $usuario = $this->usuarioModel->obtenerUno($id);
+            $usuario = $this->usuarioModel->obtenerUno(id: $id);
             if ($usuario) {
                 return $usuario;
             } else {
