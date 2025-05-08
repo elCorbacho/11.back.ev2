@@ -43,24 +43,52 @@ class AntecedenteLaboral {
 
     // Actualizar un antecedente laboral
     public function actualizar($id, $data) {
-        $query = "UPDATE $this->table 
-                  SET candidato_id = :candidato_id, empresa = :empresa, cargo = :cargo, 
-                      funciones = :funciones, fecha_inicio = :fecha_inicio, fecha_termino = :fecha_termino 
-                  WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
+    $campos = [];
+    $parametros = [];
 
-        $stmt->bindValue(':candidato_id', $data['candidato_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':empresa', $data['empresa']);
-        $stmt->bindValue(':cargo', $data['cargo']);
-        $stmt->bindValue(':funciones', $data['funciones']);
-        $stmt->bindValue(':fecha_inicio', $data['fecha_inicio']);
-        $stmt->bindValue(':fecha_termino', $data['fecha_termino']);
-        $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
-
-        return $stmt->execute();
+    if (isset($data['candidato_id'])) {
+        $campos[] = "candidato_id = :candidato_id";
+        $parametros[':candidato_id'] = $data['candidato_id'];
+    }
+    if (isset($data['empresa'])) {
+        $campos[] = "empresa = :empresa";
+        $parametros[':empresa'] = $data['empresa'];
+    }
+    if (isset($data['cargo'])) {
+        $campos[] = "cargo = :cargo";
+        $parametros[':cargo'] = $data['cargo'];
+    }
+    if (isset($data['funciones'])) {
+        $campos[] = "funciones = :funciones";
+        $parametros[':funciones'] = $data['funciones'];
+    }
+    if (isset($data['fecha_inicio'])) {
+        $campos[] = "fecha_inicio = :fecha_inicio";
+        $parametros[':fecha_inicio'] = $data['fecha_inicio'];
+    }
+    if (isset($data['fecha_termino'])) {
+        $campos[] = "fecha_termino = :fecha_termino";
+        $parametros[':fecha_termino'] = $data['fecha_termino'];
     }
 
-    // Eliminar un antecedente laboral
+    if (empty($campos)) {
+        return false; // No hay campos para actualizar
+    }
+
+    $query = "UPDATE $this->table SET " . implode(", ", $campos) . " WHERE id = :id";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
+
+    foreach ($parametros as $clave => $valor) {
+        $stmt->bindValue($clave, $valor);
+    }
+
+    return $stmt->execute();
+
+
+    }
+
+    // Eliminar un antecedente laboral por ID
     public function eliminar($id) {
         $query = "DELETE FROM $this->table WHERE id = :id";
         $stmt = $this->conn->prepare($query);

@@ -8,6 +8,7 @@ class OfertaLaboral {
         $this->conn = $db;
     }
 
+    // Crear un nuevo antecedente laboral
     public function crear($data) {
         $query = "INSERT INTO $this->table 
             (titulo, descripcion, ubicacion, salario, tipo_contrato, fecha_cierre, reclutador_id) 
@@ -26,12 +27,14 @@ class OfertaLaboral {
         return $stmt->execute();
     }
 
+    // Listar todos los antecedentes laborales
     public function listar() {
         $query = "SELECT * FROM $this->table WHERE estado = 'Vigente'";
         $stmt = $this->conn->query($query);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Obtener un antecedente laboral por su ID
     public function obtenerPorId($id) {
         $query = "SELECT * FROM $this->table WHERE id = :id";
         $stmt = $this->conn->prepare($query);
@@ -42,13 +45,11 @@ class OfertaLaboral {
 
 
 
-//actualizar corregido
-
-
+    // Eliminar un antecedente laboral (marcar como inactivo)
     public function eliminar($id) {
-        $query = "DELETE FROM $this->table WHERE id = :id";
+        $query = "UPDATE $this->table SET estado = 'Inactiva' WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', (int)$id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 
@@ -75,6 +76,7 @@ class OfertaLaboral {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Actualizar un antecedente laboral
     public function actualizar($id, $data) {
         $campos = [];
         $parametros = [];

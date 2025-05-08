@@ -115,7 +115,7 @@ La API admite las siguientes operaciones HTTP para cada recurso:
 
 ### Endpoints Personalizados – Reclutador
 - `POST /index.php?type=reclutador&action=crear_oferta`
-- `PUT /index.php?type=reclutador&action=editar_oferta&id={id}`
+- `PATCH /index.php?type=reclutador&action=editar_oferta&id={id}`
 - `PATCH /index.php?type=reclutador&action=desactivar_oferta&id={id}`
 - `GET /index.php?type=reclutador&action=ver_postulantes&id_oferta={id}`
 - `PATCH /index.php?type=reclutador&action=actualizar_estado_postulacion&id_postulacion={id}`

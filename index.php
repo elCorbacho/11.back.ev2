@@ -121,13 +121,40 @@ if (isset($_GET['type']) && $_GET['type'] === 'reclutador') {
             echo json_encode($controller->crearOferta($data));
             exit;
 
+        //case 'editar_oferta':
+           // $id = $_GET['id'] ?? null;
+           // $data = json_decode(file_get_contents("php://input"), true);
+           // echo json_encode($controller->editarOferta($id, $data));
+           // exit;
         case 'editar_oferta':
             $id = $_GET['id'] ?? null;
             $data = json_decode(file_get_contents("php://input"), true);
-            echo json_encode($controller->editarOferta($id, $data));
+            
+            if ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
+                echo json_encode($controller->editarOferta($id, $data)); // ← es PATCH, lo dejas como está
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+                http_response_code(501); // Not Implemented
+                echo json_encode(["error" => true, "message" => "PUT no está implementado para editar oferta. Usa PATCH."]);
+            } else {
+                http_response_code(405);
+                echo json_encode(["error" => true, "message" => "Método no permitido para esta acción."]);
+            }
             exit;
-
+        
+        //case 'desactivar_oferta':
+        //    $id = $_GET['id'] ?? null;
+        //    echo json_encode($controller->desactivarOferta($id));
+        //    exit;
         case 'desactivar_oferta':
+            if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
+                http_response_code(405);
+                echo json_encode([
+                    "error" => true,
+                    "message" => "Método no permitido. Usa PATCH para desactivar una oferta."
+                ]);
+                exit;
+            }
+
             $id = $_GET['id'] ?? null;
             echo json_encode($controller->desactivarOferta($id));
             exit;
