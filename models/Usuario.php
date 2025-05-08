@@ -11,6 +11,14 @@ class Usuario {
 
     // Registrar nuevo usuario
     public function registrar($data) {
+        // Validar campos obligatorios
+        $required = ['nombre', 'apellido', 'email', 'contrasena', 'fecha_nacimiento', 'telefono', 'direccion', 'rol'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                throw new Exception("El campo '$field' es obligatorio.");
+            }
+        }
+
         $query = "INSERT INTO $this->table 
                     (nombre, apellido, email, contrasena, fecha_nacimiento, telefono, direccion, rol) 
                   VALUES 
@@ -29,7 +37,14 @@ class Usuario {
         $stmt->bindParam(':direccion', $data['direccion']);
         $stmt->bindParam(':rol', $data['rol']);
 
-        return $stmt->execute();
+        // Si es un mock de PHPUnit, execute puede devolver null en vez de false
+        $result = $stmt->execute();
+        return $result === false ? false : (bool)$result;
+    }
+
+    // Crear nuevo usuario (alias de registrar para compatibilidad con tests)
+    public function crear($data) {
+        return $this->registrar($data);
     }
 
     // Iniciar sesión
@@ -131,11 +146,6 @@ class Usuario {
     }
 
 
-
-
-
-
-
     // Eliminar usuario (cambio de estado a inactivo)
     public function eliminar($id) {
         $query = "UPDATE $this->table SET estado = 'Inactivo' WHERE id = :id";
@@ -143,4 +153,6 @@ class Usuario {
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
-}
+
+
+}//

@@ -25,22 +25,22 @@ class AntecedenteAcademico {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Crear un nuevo antecedente académico
+    // Crear nuevo antecedente académico
     public function crear($data) {
-        if (!isset($data['candidato_id'], $data['institucion'], $data['titulo_obtenido'], $data['anio_ingreso'], $data['anio_egreso'])) {
-            return false;
-        }
-
-        $query = "INSERT INTO $this->table (candidato_id, institucion, titulo_obtenido, anio_ingreso, anio_egreso)
-                  VALUES (:candidato_id, :institucion, :titulo_obtenido, :anio_ingreso, :anio_egreso)";
+        // Ajusta los nombres de los campos según tu base de datos
+        $query = "INSERT INTO antecedente_academico 
+            (candidato_id, nivel_educacional, titulo, institucion, fecha_inicio, fecha_termino) 
+            VALUES 
+            (:candidato_id, :nivel_educacional, :titulo, :institucion, :fecha_inicio, :fecha_termino)";
         $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':candidato_id', $data['candidato_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':institucion', $data['institucion'], PDO::PARAM_STR);
-        $stmt->bindValue(':titulo_obtenido', $data['titulo_obtenido'], PDO::PARAM_STR);
-        $stmt->bindValue(':anio_ingreso', $data['anio_ingreso'], PDO::PARAM_INT);
-        $stmt->bindValue(':anio_egreso', $data['anio_egreso'], PDO::PARAM_INT);
-
-        return $stmt->execute();
+        $stmt->bindParam(':candidato_id', $data['candidato_id']);
+        $stmt->bindParam(':nivel_educacional', $data['nivel_educacional']);
+        $stmt->bindParam(':titulo', $data['titulo']);
+        $stmt->bindParam(':institucion', $data['institucion']);
+        $stmt->bindParam(':fecha_inicio', $data['fecha_inicio']);
+        $stmt->bindParam(':fecha_termino', $data['fecha_termino']);
+        $result = $stmt->execute();
+        return $result === true;
     }
 
     // Actualizar un antecedente académico
