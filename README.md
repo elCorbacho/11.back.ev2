@@ -114,117 +114,24 @@ La API admite las siguientes operaciones HTTP para cada recurso:
 -- `DELETE /index.php?type=postulacion&id={id}`
 
 ### Endpoints Personalizados – Reclutador
-- `POST /index.php?type=reclutador&action=crear_oferta`
-- `PATCH /index.php?type=reclutador&action=editar_oferta&id={id}`
-- `PATCH /index.php?type=reclutador&action=desactivar_oferta&id={id}`
-- `GET /index.php?type=reclutador&action=ver_postulantes&id_oferta={id}`
-- `PATCH /index.php?type=reclutador&action=actualizar_estado_postulacion&id_postulacion={id}`
+-- `POST /index.php?type=reclutador&action=crear_oferta`
+-- `PATCH /index.php?type=reclutador&action=editar_oferta&id={id}`
+-- `PATCH /index.php?type=reclutador&action=desactivar_oferta&id={id}`
+-- `GET /index.php?type=reclutador&action=ver_postulantes&id_oferta={id}`
+-- `PATCH /index.php?type=reclutador&action=actualizar_estado_postulacion&id_postulacion={id}`
 
 ### Endpoints Personalizados – Candidato
-- `GET /index.php?type=candidato&action=ver_ofertas`
-- `POST /index.php?type=candidato&action=postular&id_oferta={id}`
-- `GET /index.php?type=candidato&action=mis_postulaciones&id={candidato_id}`
+-- `GET /index.php?type=candidato&action=ver_ofertas`
+-- `POST /index.php?type=candidato&action=postular&id_oferta={id}`
+-- `GET /index.php?type=candidato&action=mis_postulaciones&id={candidato_id}`
 
 ### Vistas Especiales (GET)
-- `GET /index.php?type=oferta&vista=vigentes`
-- `GET /index.php?type=postulacion&vista=postulanteasociado_oferta`
-- `GET /index.php?type=postulacion&vista=basica_por_candidato&candidato_id={id}`
+-- `GET /index.php?type=oferta&vista=vigentes`
+-- `GET /index.php?type=postulacion&vista=postulanteasociado_oferta`
+-- `GET /index.php?type=postulacion&vista=basica_por_candidato&candidato_id={id}`
 
 ---
 
-## Ejemplos de Request y Response
-
-### Crear un usuario
-
-**Request (POST /index.php?type=usuario):**
-```json
-{
-  "nombre": "Juan Pérez",
-  "email": "juan@example.com",
-  "password": "123456"
-}
-```
-**Response (201):**
-```json
-{
-  "success": true,
-  "message": "Usuario creado exitosamente",
-  "data": {
-    "id": 1,
-    "nombre": "Juan Pérez",
-    "email": "juan@example.com"
-  }
-}
-```
-
-### Crear una oferta laboral
-
-**Request (POST /index.php?type=oferta):**
-```json
-{
-  "titulo": "Desarrollador PHP",
-  "descripcion": "Desarrollo de aplicaciones web en PHP",
-  "empresa": "Tech Solutions",
-  "ubicacion": "Santiago",
-  "salario": 1200000
-}
-```
-**Response (201):**
-```json
-{
-  "success": true,
-  "message": "Oferta creada exitosamente",
-  "data": {
-    "id": 10,
-    "titulo": "Desarrollador PHP",
-    "empresa": "Tech Solutions"
-  }
-}
-```
-
-### Postular a una oferta (Candidato)
-
-**Request (POST /index.php?type=candidato&action=postular&id_oferta=10):**
-```json
-{
-  "candidato_id": 5,
-  "cv_url": "https://ejemplo.com/cv/juanperez.pdf"
-}
-```
-**Response (201):**
-```json
-{
-  "success": true,
-  "message": "Postulación realizada exitosamente",
-  "data": {
-    "id": 22,
-    "candidato_id": 5,
-    "oferta_id": 10
-  }
-}
-```
-
-### Ver postulantes de una oferta (Reclutador)
-
-**Request (GET /index.php?type=reclutador&action=ver_postulantes&id_oferta=10):**
-
-**Response (200):**
-```json
-[
-  {
-    "id": 22,
-    "candidato": "Juan Pérez",
-    "estado": "En revisión"
-  },
-  {
-    "id": 23,
-    "candidato": "Ana López",
-    "estado": "Aceptado"
-  }
-]
-```
-
----
 
 ## Contribuciones
 

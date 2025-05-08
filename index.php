@@ -188,7 +188,22 @@ if (isset($_GET['type']) && $_GET['type'] === 'candidato') {
             echo json_encode($controller->verOfertas());
             exit;
 
+        //case 'postular':
+           // $id_oferta = $_GET['id_oferta'] ?? null;
+          //  $data = json_decode(file_get_contents("php://input"), true);
+           // echo json_encode($controller->postular($id_oferta, $data));
+          //  exit;
+        // POST: Crear una nueva postulación
         case 'postular':
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode([
+                    "error" => true,
+                    "message" => "Método no permitido. Debes usar POST para postular a una oferta."
+                ]);
+                exit;
+            }
+
             $id_oferta = $_GET['id_oferta'] ?? null;
             $data = json_decode(file_get_contents("php://input"), true);
             echo json_encode($controller->postular($id_oferta, $data));
