@@ -74,63 +74,62 @@ La API admite las siguientes operaciones HTTP para cada recurso:
 ## Endpoints Disponibles
 
 ### Usuarios
--- `GET /index.php?type=usuario`
--- `GET /index.php?type=usuario&id={id}`
--- `POST /index.php?type=usuario`
--- `PUT /index.php?type=usuario&id={id}`
--- `PATCH /index.php?type=usuario&id={id}`
+- `GET /index.php?type=usuario`
+- `GET /index.php?type=usuario&id={id}`
+- `POST /index.php?type=usuario`
+- `PUT /index.php?type=usuario&id={id}`
+- `PATCH /index.php?type=usuario&id={id}`
 - `DELETE /index.php?type=usuario&id={id}`
 
 ### Antecedentes Académicos
--- `GET /index.php?type=academico`
--- `GET /index.php?type=academico&id={id}`
--- `POST /index.php?type=academico`
--- `PUT /index.php?type=academico&id={id}`
--- `PATCH /index.php?type=academico&id={id}`
--- `DELETE /index.php?type=academico&id={id}`
+- `GET /index.php?type=academico`
+- `GET /index.php?type=academico&id={id}`
+- `POST /index.php?type=academico`
+- `PUT /index.php?type=academico&id={id}`
+- `PATCH /index.php?type=academico&id={id}`
+- `DELETE /index.php?type=academico&id={id}`
 
 ### Antecedentes Laborales
--- `GET /index.php?type=laboral`
--- `GET /index.php?type=laboral&id={id}`
--- `POST /index.php?type=laboral`
--- `PUT /index.php?type=laboral&id={id}`
--- `PATCH /index.php?type=laboral&id={id}`
--- `DELETE /index.php?type=laboral&id={id}`
+- `GET /index.php?type=laboral`
+- `GET /index.php?type=laboral&id={id}`
+- `POST /index.php?type=laboral`
+- `PUT /index.php?type=laboral&id={id}`
+- `PATCH /index.php?type=laboral&id={id}`
+- `DELETE /index.php?type=laboral&id={id}`
 
 ### Ofertas Laborales
--- `GET /index.php?type=oferta`
--- `GET /index.php?type=oferta&id={id}`
--- `POST /index.php?type=oferta`
--- `PUT /index.php?type=oferta&id={id}`
--- `PATCH /index.php?type=oferta&id={id}`
--- `DELETE /index.php?type=oferta&id={id}`
+- `GET /index.php?type=oferta`
+- `GET /index.php?type=oferta&id={id}`
+- `POST /index.php?type=oferta`
+- `PUT /index.php?type=oferta&id={id}`
+- `PATCH /index.php?type=oferta&id={id}`
+- `DELETE /index.php?type=oferta&id={id}`
 
 ### Postulaciones
--- `GET /index.php?type=postulacion`
--- `GET /index.php?type=postulacion&id={id}`
--- `POST /index.php?type=postulacion`
--- `PUT /index.php?type=postulacion&id={id}`
--- `PATCH /index.php?type=postulacion&id={id}`
--- `DELETE /index.php?type=postulacion&id={id}`
+- `GET /index.php?type=postulacion`
+- `GET /index.php?type=postulacion&id={id}`
+- `POST /index.php?type=postulacion`
+- `PUT /index.php?type=postulacion&id={id}`
+- `PATCH /index.php?type=postulacion&id={id}`
+- `DELETE /index.php?type=postulacion&id={id}`
 
 ### Endpoints Personalizados – Reclutador
--- `POST /index.php?type=reclutador&action=crear_oferta`
--- `PATCH /index.php?type=reclutador&action=editar_oferta&id={id}`
--- `PATCH /index.php?type=reclutador&action=desactivar_oferta&id={id}`
--- `GET /index.php?type=reclutador&action=ver_postulantes&id_oferta={id}`
--- `PATCH /index.php?type=reclutador&action=actualizar_estado_postulacion&id_postulacion={id}`
+- `POST /index.php?type=reclutador&action=crear_oferta`
+- `PATCH /index.php?type=reclutador&action=editar_oferta&id={id}`
+- `PATCH /index.php?type=reclutador&action=desactivar_oferta&id={id}`
+- `GET /index.php?type=reclutador&action=ver_postulantes&id_oferta={id}`
+- `PATCH /index.php?type=reclutador&action=actualizar_estado_postulacion&id_postulacion={id}`
 
 ### Endpoints Personalizados – Candidato
--- `GET /index.php?type=candidato&action=ver_ofertas`
--- `POST /index.php?type=candidato&action=postular&id_oferta={id}`
--- `GET /index.php?type=candidato&action=mis_postulaciones&id={candidato_id}`
+- `GET /index.php?type=candidato&action=ver_ofertas`
+- `POST /index.php?type=candidato&action=postular&id_oferta={id}`
+- `GET /index.php?type=candidato&action=mis_postulaciones&id={candidato_id}`
 
 ### Vistas Especiales (GET)
--- `GET /index.php?type=oferta&vista=vigentes`
--- `GET /index.php?type=postulacion&vista=postulanteasociado_oferta`
--- `GET /index.php?type=postulacion&vista=basica_por_candidato&candidato_id={id}`
+- `GET /index.php?type=oferta&vista=vigentes`
+- `GET /index.php?type=postulacion&vista=postulanteasociado_oferta`
+- `GET /index.php?type=postulacion&vista=basica_por_candidato&candidato_id={id}`
 
----
 
 
 ## Contribuciones
