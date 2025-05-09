@@ -1,5 +1,5 @@
 <?php
-//BRANCH_PARA PERFILES
+// entrega_1
 // Permitir solicitudes CORS
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');

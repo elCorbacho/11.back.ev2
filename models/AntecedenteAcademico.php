@@ -1,5 +1,5 @@
 <?php
-//branc_ac
+// entrega_1
 class AntecedenteAcademico {
     private $db;
     private $table = 'antecedenteacademico'; // Define the table name

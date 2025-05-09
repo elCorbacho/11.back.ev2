@@ -1,5 +1,5 @@
 <?php
-//branc_ac
+// entrega_1
 class AntecedenteLaboral {
     private $conn;
     private $table = 'antecedentelaboral';

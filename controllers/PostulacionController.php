@@ -1,5 +1,5 @@
 <?php
-// BRANCH_AC
+// entrega_1
 require_once './models/Postulacion.php';
 
 class PostulacionController {

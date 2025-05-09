@@ -1,5 +1,5 @@
 <?php
-//branc_ac
+// entrega_1
 class Database {
     private $host = "localhost";
     private $db_name = "cliente_feliz";
