@@ -1,5 +1,7 @@
 # API RESTful en PHP – Proyecto 11.back.ev2 branch entrega1
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/elCorbacho/11.back.ev2)
+
 ## Descripción General
 
 Este proyecto implementa una API RESTful en PHP utilizando el patrón MVC (Modelo–Vista–Controlador). Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los recursos principales del sistema: usuarios, antecedentes académicos y laborales, ofertas laborales, postulaciones, candidatos y reclutadores. La aplicación está diseñada para ser escalable, mantenible y reutilizable.
